@@ -8,7 +8,8 @@
     id="google-login-button"
     class="rounded-lg bg-red-500/70 hover:bg-red-400/70 text-slate-200 ring-1 ring-slate-200/20 px-3 py-2 text-xs font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
     (click)="signInWithGoogle()"
-  >Zaloguj z Google
+  >
+    Zaloguj z Google
   </button>
 
   <a href="#"
@@ -20,10 +21,11 @@
   *ngIf="isLoggedIn()"
   class="lg:flex gap-6 items-center"
 >
-  <p class="text-slate-200">Witaj, {{getName()}}!</p>
-<button
-  class="rounded-lg bg-red-500/70 hover:bg-red-400/70 text-slate-200 ring-1 ring-slate-200/20 px-3 py-2 text-xs font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-  (click)="logout()"
->Wyloguj
-</button>
+  <p *ngIf="getName().length > 0" class="text-slate-200">Witaj, {{getName()}}!</p>
+  <button
+    class="rounded-lg bg-red-500/70 hover:bg-red-400/70 text-slate-200 ring-1 ring-slate-200/20 px-3 py-2 text-xs font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+    (click)="logout()"
+  >
+    Wyloguj
+  </button>
 </div>

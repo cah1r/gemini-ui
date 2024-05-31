@@ -32,16 +32,13 @@ export class AuthGoogleService {
   subscribeForUserData() {
     this.oAuthService.events.subscribe(event => {
       if (event.type === 'token_received') {
-        console.log('token received')
         const profile = this.getProfile()
         this.user = {
           firstName: profile['given_name'],
           lastName: profile['family_name'],
           email: profile['email']
         }
-        this.userService.loginWithGoogle(this.user).subscribe(response =>
-          console.log(`got response from backend: ${response.toString()}`)
-        )
+        this.userService.loginWithGoogle(this.user).subscribe()
       }
     })
   }
