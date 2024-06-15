@@ -1,31 +1,24 @@
 import {Injectable} from '@angular/core';
-import {
-  HttpInterceptor,
-  HttpHandler,
-  HttpRequest,
-  HttpEvent,
-  HttpXsrfTokenExtractor
-} from '@angular/common/http';
+import {HttpEvent, HttpInterceptor, HttpHandler, HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class CsrfInterceptor implements HttpInterceptor {
 
-  constructor(private csrfExtract: HttpXsrfTokenExtractor) {}
+  XSRF_REGEX = /(?:^|;\s*)XSRF-TOKEN\s*=\s*([^;]*)/
+  apiBaseUrl = 'http://localhost:8080/api/v1'
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    console.log("interceptor works")
-    const csrfToken = this.csrfExtract.getToken();
-    if (csrfToken) {
+    const match = document.cookie.match(this.XSRF_REGEX)
+    const xsrfToken = match ? match[1] : ''
+
+    if (req.url.startsWith(this.apiBaseUrl) && xsrfToken) {
       const clonedRequest = req.clone({
-        headers: req.headers.set('X-XSRF-TOKEN', csrfToken),
-        withCredentials: true
-      });
-      return next.handle(clonedRequest);
+        headers: req.headers.set('X-XSRF-TOKEN', xsrfToken)
+      })
+      return next.handle(clonedRequest)
+    } else {
+      return next.handle(req)
     }
-    console.log(`extracted csrf token: ${csrfToken}`);
-    return next.handle(req);
   }
 }
