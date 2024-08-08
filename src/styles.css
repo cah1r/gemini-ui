@@ -1,3 +1,41 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@layer tailwind-base, primeng, tailwind-utilities;
+
+@layer tailwind-base {
+  @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+}
+
+@import 'primeng/resources/themes/vela-orange/theme.css';
+@import "primeng/resources/primeng.css";
+@import 'primeicons/primeicons.css';
+
+html {
+  font-size: 90%;
+}
+
+body, .p-component {
+  font-family: "Libre Franklin", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+.p-button {
+  border-radius: 8px;
+}
+
+.p-dialog,
+.p-inputtext {
+  border-radius: 10px;
+}
+
+.p-dialog-content {
+  border-radius: 0 0 10px 10px;
+}
+
+.p-dialog-header {
+  border-radius: 10px 10px 0 0;
+}

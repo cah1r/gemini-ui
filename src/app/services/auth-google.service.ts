@@ -1,14 +1,14 @@
 import {Injectable} from '@angular/core';
 import {AuthConfig, OAuthService} from "angular-oauth2-oidc";
 import {UserService} from "./user.service"
-import {User} from "../shared/model/user.model";
-import { environment } from "../../environments/environment";
+import {CreateUser} from "../shared/model/create-user.model";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGoogleService {
-  user: User | undefined
+  user: CreateUser | undefined
 
   constructor(private oAuthService: OAuthService, private userService: UserService) {
     this.initConfiguration()
@@ -33,11 +33,7 @@ export class AuthGoogleService {
     this.oAuthService.events.subscribe(event => {
       if (event.type === 'token_received') {
         const profile = this.getProfile()
-        this.user = {
-          firstName: profile['given_name'],
-          lastName: profile['family_name'],
-          email: profile['email']
-        }
+        this.user = { email: profile['email'] }
         this.userService.loginWithGoogle(this.user).subscribe()
       }
     })

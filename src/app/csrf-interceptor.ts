@@ -14,7 +14,8 @@ export class CsrfInterceptor implements HttpInterceptor {
 
     if (req.url.startsWith(this.apiBaseUrl) && xsrfToken) {
       const clonedRequest = req.clone({
-        headers: req.headers.set('X-XSRF-TOKEN', xsrfToken)
+        headers: req.headers.set('X-XSRF-TOKEN', xsrfToken),
+        withCredentials: true
       })
       return next.handle(clonedRequest)
     } else {

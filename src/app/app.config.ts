@@ -4,9 +4,10 @@ import {provideRouter} from '@angular/router';
 import {routes} from './app.routes';
 
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
-import {provideHttpClient, HTTP_INTERCEPTORS, withInterceptorsFromDi} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
 import {provideOAuthClient} from 'angular-oauth2-oidc';
 import {CsrfInterceptor} from "./csrf-interceptor";
+import {MessageService} from "primeng/api";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,5 +20,6 @@ export const appConfig: ApplicationConfig = {
       useClass: CsrfInterceptor,
       multi: true
     },
+    MessageService
   ]
 };

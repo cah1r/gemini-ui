@@ -1,18 +1,22 @@
 import {Component} from '@angular/core';
 import {AuthGoogleService} from "../../services/auth-google.service";
 import {NgIf} from "@angular/common";
+import {SignupModalComponent} from "../signup-modal/signup-modal.component";
+import {MessageService} from "primeng/api";
+import {ToastModule} from "primeng/toast";
 
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [NgIf],
+  imports: [NgIf, SignupModalComponent, ToastModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
 
-  constructor(private authService: AuthGoogleService) {}
+  constructor(private authService: AuthGoogleService, private messageService: MessageService) {
+  }
 
   signInWithGoogle() {
     this.authService.login()
@@ -24,9 +28,16 @@ export class LoginComponent {
 
   logout() {
     this.authService.logout()
+    this.logoutNotification()
   }
 
-  getName() {
-    return this.authService.user?.firstName ?? ''
+  private logoutNotification() {
+    this.messageService.add(
+      {
+        severity: 'success',
+        summary: 'Sukces',
+        detail: 'Zostałeś poprawnie wylogowany',
+        life: 5000
+      })
   }
 }
