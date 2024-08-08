@@ -7,6 +7,7 @@ import {ButtonModule} from "primeng/button";
 import {CreateUser} from "../model/create-user.model";
 import {NgIf} from "@angular/common";
 import {MessageService} from "primeng/api";
+import {AuthGoogleService} from "../../services/auth-google.service";
 
 @Component({
   selector: 'app-signup-modal',
@@ -28,7 +29,12 @@ export class SignupModalComponent {
   signupForm: FormGroup
   @ViewChild('modalContainer') modalContainer: ElementRef | undefined;
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private messageService: MessageService) {
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient,
+    private messageService: MessageService,
+    private authService: AuthGoogleService
+  ) {
     this.signupForm = this.fb.group({
       phoneNumber: ['', Validators.pattern(/^\d{9}$/)],
       email: ['', [Validators.required, Validators.email]],
@@ -76,6 +82,10 @@ export class SignupModalComponent {
   onCancel() {
     this.display = false
     this.signupForm.reset()
+  }
+
+  signInWithGoogle() {
+    this.authService.login()
   }
 
 }
