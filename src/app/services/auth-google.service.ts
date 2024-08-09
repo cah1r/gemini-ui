@@ -1,14 +1,14 @@
 import {Injectable} from '@angular/core';
 import {AuthConfig, OAuthService} from "angular-oauth2-oidc";
 import {UserService} from "./user.service"
-import {CreateUser} from "../shared/model/create-user.model";
 import {environment} from "../../environments/environment";
+import {CreateGoogleUser} from "../shared/model/create-google-user";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGoogleService {
-  user: CreateUser | undefined
+  user: CreateGoogleUser | undefined
 
   constructor(private oAuthService: OAuthService, private userService: UserService) {
     this.initConfiguration()

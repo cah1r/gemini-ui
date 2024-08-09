@@ -1,12 +1,12 @@
 import {Component} from '@angular/core';
-import {LoginComponent} from "../shared/login/login.component";
+import {LoginNavComponent} from "../login/login-nav/login-nav.component";
 import {NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [
-    LoginComponent,
+    LoginNavComponent,
     NgIf
   ],
   templateUrl: './header.component.html',

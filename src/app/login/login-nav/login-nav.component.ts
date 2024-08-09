@@ -5,16 +5,18 @@ import {SignupModalComponent} from "../signup-modal/signup-modal.component";
 import {LoginModalComponent} from "../login-modal/login-modal.component";
 import {MessageService} from "primeng/api";
 import {ToastModule} from "primeng/toast";
+import {Button} from "primeng/button";
+import {MODAL_LIFE} from "../../shared/constants";
 
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-login-nav',
   standalone: true,
-  imports: [NgIf, SignupModalComponent, ToastModule, LoginModalComponent],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  imports: [NgIf, SignupModalComponent, ToastModule, LoginModalComponent, Button],
+  templateUrl: './login-nav.component.html',
+  styleUrl: './login-nav.component.css'
 })
-export class LoginComponent {
+export class LoginNavComponent {
 
   private loggedIn: boolean = false
 
@@ -22,8 +24,7 @@ export class LoginComponent {
   }
 
   isLoggedIn(): boolean {
-    return this.loggedIn
-    // return this.authService.isLoggedIn()
+    return this.loggedIn || this.authService.isLoggedIn()
   }
 
   setLoggedIn() {
@@ -42,7 +43,7 @@ export class LoginComponent {
         severity: 'success',
         summary: 'Sukces',
         detail: 'Zostałeś poprawnie wylogowany',
-        life: 5000
+        life: MODAL_LIFE
       })
   }
 }

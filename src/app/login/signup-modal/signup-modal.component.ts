@@ -4,11 +4,12 @@ import {HttpClient} from "@angular/common/http";
 import {DialogModule} from "primeng/dialog";
 import {InputTextModule} from "primeng/inputtext";
 import {ButtonModule} from "primeng/button";
-import {CreateUser} from "../model/create-user.model";
+import {CreateUser} from "../../shared/model/create-user.model";
 import {NgIf} from "@angular/common";
 import {MessageService} from "primeng/api";
 import {AuthGoogleService} from "../../services/auth-google.service";
-import {LoginComponent} from "../login/login.component";
+import {LoginNavComponent} from "../login-nav/login-nav.component";
+import {API_URL} from "../../shared/constants";
 
 @Component({
   selector: 'app-signup-modal',
@@ -24,7 +25,7 @@ import {LoginComponent} from "../login/login.component";
   styleUrl: './signup-modal.component.css'
 })
 export class SignupModalComponent {
-  signUpUrl = 'http://localhost:8080/api/v1/customer/createUser'
+  createUserPath = '/customer/createUser'
   user: CreateUser | undefined
   display: boolean = false
   signupForm: FormGroup
@@ -35,7 +36,7 @@ export class SignupModalComponent {
     private http: HttpClient,
     private messageService: MessageService,
     private authService: AuthGoogleService,
-    private loginComponent: LoginComponent
+    private loginComponent: LoginNavComponent
   ) {
     this.signupForm = this.fb.group({
       phoneNumber: ['', Validators.pattern(/^\d{9}$/)],
@@ -63,7 +64,7 @@ export class SignupModalComponent {
         password: this.signupForm.get('password')?.value
       }
 
-      this.http.post<any>(this.signUpUrl, this.user, {withCredentials: true})
+      this.http.post<any>(API_URL + this.createUserPath, this.user, {withCredentials: true})
         .subscribe({
           next: () => {
             this.onCancel()

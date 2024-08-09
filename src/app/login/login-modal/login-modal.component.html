@@ -29,7 +29,7 @@
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
       <div class="flex flex-col gap-4 p-fluid">
         <div class="p-field">
-          <label for="email">Email</label>
+          <label for="email" class="ml-2">Email</label>
           <input id="email" type="email" class="p-inputtext-sm" pInputText formControlName="email"/>
           <small
             *ngIf="loginForm.get('email')?.hasError('email') && (loginForm.get('email')?.touched || loginForm.get('email')?.dirty)"
@@ -39,7 +39,7 @@
           </small>
         </div>
         <div class="p-field">
-          <label for="password">Hasło</label>
+          <label for="password" class="ml-2">Hasło</label>
           <input id="password" type="password" class="p-inputtext-sm" pInputText formControlName="password"/>
           <small
             *ngIf="loginForm.get('password')?.hasError('minlength') && (loginForm.get('password')?.touched ||

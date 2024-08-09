@@ -3,6 +3,7 @@ import {RouterOutlet} from "@angular/router";
 import {HeaderComponent} from "./header/header.component";
 import {NgIf} from "@angular/common";
 import {HttpClient} from "@angular/common/http";
+import {API_URL} from "./shared/constants";
 
 @Component({
   selector: 'app-root',
@@ -18,7 +19,7 @@ export class AppComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.http.post(`http://localhost:8080/api/v1/csrf`, null, { withCredentials: true }).subscribe()
+    this.http.post(`${API_URL}/csrf`, null, { withCredentials: true }).subscribe()
   }
 
 }

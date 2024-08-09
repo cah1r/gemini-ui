@@ -6,11 +6,11 @@ import {NgIf} from "@angular/common";
 import {PaginatorModule} from "primeng/paginator";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthGoogleService} from "../../services/auth-google.service";
-import {LoginUser} from "../model/login-user.model";
+import {LoginUser} from "../../shared/model/login-user.model";
 import {HttpClient} from "@angular/common/http";
 import {MessageService} from "primeng/api";
-import {LoginComponent} from "../login/login.component";
-import {error} from "@angular/compiler-cli/src/transformers/util";
+import {LoginNavComponent} from "../login-nav/login-nav.component";
+import {API_URL, MODAL_LIFE} from "../../shared/constants";
 
 @Component({
   selector: 'app-login-modal',
@@ -27,7 +27,7 @@ import {error} from "@angular/compiler-cli/src/transformers/util";
   styleUrl: './login-modal.component.css'
 })
 export class LoginModalComponent {
-  loginUrl = 'http://localhost:8080/api/v1/customer/login'
+  loginPath = '/customer/login'
   display: boolean = false
   loginForm: FormGroup
   user: LoginUser | undefined
@@ -37,7 +37,7 @@ export class LoginModalComponent {
     private googleService: AuthGoogleService,
     private http: HttpClient,
     private messageService: MessageService,
-    private loginComponent: LoginComponent,
+    private loginComponent: LoginNavComponent,
     private fb: FormBuilder
   ) {
     this.loginForm = this.fb.group({
@@ -61,7 +61,7 @@ export class LoginModalComponent {
         password: this.loginForm.get('password')?.value
       }
 
-      this.http.post(this.loginUrl, this.user)
+      this.http.post(API_URL + this.loginPath, this.user)
         .subscribe({
           next: () => {
             this.onCancel()
@@ -69,7 +69,6 @@ export class LoginModalComponent {
             this.successLoginNotification()
           },
           error: () => {
-            console.log(error)
             this.failedLoginNotification()
           }
         })
@@ -86,7 +85,7 @@ export class LoginModalComponent {
       severity: 'success',
       summary: 'Zalogowano',
       detail: `Logowanie ${this.user?.email} zakończone sukcesem`,
-      life: 5000
+      life: MODAL_LIFE
     })
   }
 
@@ -95,7 +94,7 @@ export class LoginModalComponent {
       severity: 'error',
       summary: 'Błąd',
       detail: `Błąd logowania użytkownika ${this.user?.email}.`,
-      life: 5000
+      life: MODAL_LIFE
     })
   }
 
