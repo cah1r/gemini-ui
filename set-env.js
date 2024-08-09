@@ -1,5 +1,5 @@
 const fs = require('fs');
-const config = require('env.json');
+const config = require('./env.json');
 
 const envFilePath = './src/environments/environment.ts'
 
