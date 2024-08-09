@@ -8,6 +8,7 @@ import {CreateUser} from "../model/create-user.model";
 import {NgIf} from "@angular/common";
 import {MessageService} from "primeng/api";
 import {AuthGoogleService} from "../../services/auth-google.service";
+import {LoginComponent} from "../login/login.component";
 
 @Component({
   selector: 'app-signup-modal',
@@ -33,7 +34,8 @@ export class SignupModalComponent {
     private fb: FormBuilder,
     private http: HttpClient,
     private messageService: MessageService,
-    private authService: AuthGoogleService
+    private authService: AuthGoogleService,
+    private loginComponent: LoginComponent
   ) {
     this.signupForm = this.fb.group({
       phoneNumber: ['', Validators.pattern(/^\d{9}$/)],
@@ -86,6 +88,7 @@ export class SignupModalComponent {
 
   signInWithGoogle() {
     this.authService.login()
+    this.loginComponent.setLoggedIn()
   }
 
 }
