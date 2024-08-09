@@ -3,10 +3,11 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "node set-env.ts && ng serve --proxy-config proxy.config.json",
-    "build": "node set-env.ts && ng build",
-    "watch": "node set-env.ts && ng build --watch --configuration development",
-    "test": "node set-env.ts && ng test"
+    "prestart": "node set-env.js",
+    "start": "ng serve --proxy-config proxy.config.json",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
   },
   "private": true,
   "dependencies": {
