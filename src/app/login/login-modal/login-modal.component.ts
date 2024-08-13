@@ -83,8 +83,8 @@ export class LoginModalComponent {
   successLoginNotification() {
     this.messageService.add({
       severity: 'success',
-      summary: 'Zalogowano',
-      detail: `Logowanie ${this.user?.email} zakończone sukcesem`,
+      summary: 'Sukces',
+      detail: `Zalogowano jako ${this.user?.email}`,
       life: MODAL_LIFE
     })
   }
@@ -93,7 +93,7 @@ export class LoginModalComponent {
     this.messageService.add({
       severity: 'error',
       summary: 'Błąd',
-      detail: `Błąd logowania użytkownika ${this.user?.email}.`,
+      detail: `Błąd logowania użytkownika ${this.user?.email}. Upewnij się, że email oraz hasło są poprawne.`,
       life: MODAL_LIFE
     })
   }

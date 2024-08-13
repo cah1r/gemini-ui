@@ -4,12 +4,14 @@ import {HeaderComponent} from "./header/header.component";
 import {NgIf} from "@angular/common";
 import {HttpClient} from "@angular/common/http";
 import {API_URL} from "./shared/constants";
+import {TicketBundleComponent} from "./customer/ticket-bundle/ticket-bundle.component";
+import {RouteManagerComponent} from "./admin/route-manager/route-manager.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
   templateUrl: './app.component.html',
-  imports: [RouterOutlet, HeaderComponent, NgIf],
+  imports: [RouterOutlet, HeaderComponent, NgIf, TicketBundleComponent, RouteManagerComponent],
   styleUrl: './app.component.css',
 })
 export class AppComponent implements OnInit {

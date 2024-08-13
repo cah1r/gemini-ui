@@ -24,6 +24,7 @@
     "@clr/ui": "^17.1.0",
     "@types/node": "^22.1.0",
     "angular-oauth2-oidc": "^17.0.2",
+    "bignumber.js": "^9.1.2",
     "keycloak-js": "^25.0.2",
     "ng2-cookies": "^1.0.12",
     "primeflex": "^3.3.1",

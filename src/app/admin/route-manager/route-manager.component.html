@@ -1,0 +1,160 @@
+<p-panel header="Utwórz trasę">
+  <form [formGroup]="newRouteForm">
+    <div class="flex gap-3">
+      <p-dropdown
+        [options]="availableLines"
+        formControlName="selectedLine"
+        placeholder="Wybierz linię"
+        [style]="{width: '150px'}"
+      />
+
+      <p-dropdown
+        [options]="matchingBusStops"
+        formControlName="initialStop"
+        placeholder="Przystanek początkowy"
+        optionLabel="city"
+        [style]="{width: '250px'}"
+      >
+        <ng-template let-option pTemplate="item">
+          <div>
+            <div>{{ option.city }}</div>
+            <small>{{ option.details }}</small>
+          </div>
+        </ng-template>
+      </p-dropdown>
+
+      <p-dropdown
+        [options]="matchingBusStops"
+        formControlName="lastStop"
+        placeholder="Przystanek końcowy"
+        optionLabel="city"
+        [style]="{width: '250px'}"
+      >
+        <ng-template let-option pTemplate="item">
+          <div>
+            <div>{{ option.city }}</div>
+            <small>{{ option.details }}</small>
+          </div>
+        </ng-template>
+      </p-dropdown>
+
+      <p-inputGroup class="w-full md:w-30rem">
+        <p-inputGroupAddon>Czas podróży</p-inputGroupAddon>
+        <p-inputNumber
+          formControlName="durationH"
+          class="w-1"
+          [min]="0"
+          [max]="10"
+        />
+        <p-inputGroupAddon>godz</p-inputGroupAddon>
+        <p-inputNumber
+          formControlName="durationM"
+          [min]="0"
+          [max]="59"
+        />
+        <p-inputGroupAddon>min</p-inputGroupAddon>
+      </p-inputGroup>
+
+      <p-inputNumber
+        formControlName="ticketPrice"
+        mode="currency"
+        currency="PLN"
+        locale="pl-PL"
+        placeholder="Cena"
+      />
+
+      <div class="flex items-center gap-2">
+        <p-checkbox
+          formControlName="isActive"
+          [binary]="true"
+          variant="filled"/>
+        <label>Aktywna</label>
+      </div>
+
+      <p-button
+        (click)="createNewRoute()"
+        [disabled]="newRouteForm.invalid"
+      >Dodaj
+      </p-button>
+    </div>
+  </form>
+</p-panel>
+
+<p-panel>
+  <p-table #dt
+           [value]="allRoutes"
+           [tableStyle]="{ 'min-width': '50rem' }"
+           [globalFilterFields]="['initialStop.city', 'lastStop.city']"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex">
+        <p-iconField iconPosition="left" class="ml-auto">
+          <p-inputIcon>
+            <i class="pi pi-search"></i>
+          </p-inputIcon>
+          <input
+            pInputText
+            type="text"
+            (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+            placeholder="Szukaj słowa kluczowe" />
+        </p-iconField>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 30%">Miasto wyjazdu</th>
+        <th style="width: 30%">Miasto przyjazdu</th>
+        <th style="width: 10%">Cena biletu</th>
+        <th style="width: 10%">Czas podróży</th>
+        <th style="width: 10%" class="text-center">Status</th>
+        <th style="width: 10%"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-route>
+      <tr>
+        <td>{{ formatCityInfo(route.initialStop.city, route.initialStop.details) }}</td>
+        <td>{{ formatCityInfo(route.lastStop.city, route.lastStop.details) }}</td>
+        <td *ngIf="route.ticketPriceInPennies > 0">{{ route.ticketPriceInPennies / 100  |  number: '1.2-2'}} zł</td>
+        <td *ngIf="route.ticketPriceInPennies === 0">-</td>
+        <td>{{ formatDuration(route.durationInMinutes) }}</td>
+        <td>
+          <p-tag
+            class="flex justify-center"
+            [value]="mapBooleanToStatus(route.isActive)"
+            [severity]="getSeverity(route.isActive)"
+            [rounded]="true"
+          />
+        </td>
+        <td class="flex gap-3 justify-end">
+          <p-button *ngIf="route.isActive"
+                    severity="contrast"
+                    icon="pi pi-minus-circle"
+                    [rounded]="true"
+                    [outlined]="true"
+                    (click)="setActiveStatus(route.id, false)"
+          />
+          <p-button *ngIf="!route.isActive"
+                    severity="success"
+                    icon="pi pi-check-circle"
+                    [rounded]="true"
+                    [outlined]="true"
+                    (click)="setActiveStatus(route.id, true)"
+          />
+          <p-button
+            severity="danger"
+            icon="pi pi-trash"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="onDeleteRoute(route.id)"
+          />
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">Nie znaleziono żadnych tras w bazie danych.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-confirmDialog></p-confirmDialog>
+</p-panel>
