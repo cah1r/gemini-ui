@@ -89,7 +89,7 @@
                       icon="pi pi-trash"
                       [rounded]="true"
                       [text]="true"
-                      (click)="deleteBusStop(stop.id)"
+                      (click)="onDeleteBusStop(stop.id)"
                     />
                   </td>
                 </tr>
@@ -108,6 +108,6 @@
     </ng-template>
   </p-table>
 </div>
-
+<p-confirmDialog></p-confirmDialog>
 <app-new-line-modal #newLineModal></app-new-line-modal>
-<app-new-stop-modal #newStopModal></app-new-stop-modal>
+<app-new-stop-modal #newStopModal (stopCreated)="onStopCreated()"></app-new-stop-modal>
