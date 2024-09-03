@@ -1,11 +1,10 @@
 <div class="flex gap-4">
   <div *ngIf="!isLoggedIn()" class="lg:flex gap-2">
-    <!-- <p-button label="Zaloguj" outlined="true" (click)="login()" /> -->
     <p-button label="Zaloguj" outlined="true" (click)="loginModal.show()" />
     <app-login-modal #loginModal></app-login-modal>
 
-    <!-- <p-button label="Załóż konto" size="small" (click)="signupModal.show()" />
-  <app-signup-modal #signupModal></app-signup-modal> -->
+    <p-button label="Załóż konto" (click)="signupModal.show()" />
+    <app-signup-modal #signupModal></app-signup-modal>
   </div>
 
   <div *ngIf="isLoggedIn()" class="lg:flex gap-3 items-center">

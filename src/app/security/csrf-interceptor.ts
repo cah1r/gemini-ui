@@ -1,12 +1,11 @@
-import { Injectable } from '@angular/core';
 import {
   HttpEvent,
-  HttpInterceptor,
   HttpHandler,
+  HttpInterceptor,
   HttpRequest,
 } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { couldStartTrivia } from 'typescript';
 
 @Injectable()
 export class CsrfInterceptor implements HttpInterceptor {
