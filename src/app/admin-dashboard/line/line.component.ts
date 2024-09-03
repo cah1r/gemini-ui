@@ -8,14 +8,16 @@ import {
   Validators,
 } from '@angular/forms';
 import { AccordionModule } from 'primeng/accordion';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputTextModule } from 'primeng/inputtext';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
-import { API_URL, MODAL_LIFE } from '../../shared/constants';
+import { NotificationService } from '../../services/notification-factory.service';
+import { API_URL } from '../../shared/constants';
 import { Stop } from '../../shared/model/bus-stop';
 import { Line } from '../../shared/model/line';
 import { NewLineModalComponent } from './new-line-modal/new-line-modal.component';
@@ -37,6 +39,7 @@ import { NewStopModalComponent } from './new-stop-modal/new-stop-modal.component
     NewLineModalComponent,
     AccordionModule,
     NewStopModalComponent,
+    ConfirmDialogModule,
   ],
   templateUrl: './line.component.html',
   styleUrl: './line.component.css',
@@ -50,7 +53,7 @@ export class LineComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private fb: FormBuilder,
-    private messageService: MessageService,
+    private notification: NotificationService,
     private confirmationService: ConfirmationService
   ) {
     this.newLineForm = this.fb.group({
@@ -88,34 +91,19 @@ export class LineComponent implements OnInit {
       description: this.newLineForm.get('lineDescription')?.value,
     };
     this.http.post(API_URL + '/admin/lines', line).subscribe({
-      next: () => this.lineCreatedNotification(line.description),
-      error: () =>
-        this.errorNotification('Wystapił bład podczas tworzenia nowej linii'),
+      next: () => this.notification.success(`Utowrzono nowa trasę ${line.description}`),
+      error: () => this.notification.error('Wystapił bład podczas tworzenia nowej linii'),
     });
     this.newLineForm.reset();
+  }
+
+  onStopCreated() {
+    this.fetchAllLines();
   }
 
   fetchAllLines() {
     this.http.get<Line[]>(API_URL + '/admin/lines').subscribe({
       next: (fetchedLines) => (this._allLines = fetchedLines),
-    });
-  }
-
-  lineCreatedNotification(line: string) {
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Sukces',
-      detail: `Utowrzono nowa trasę ${line}`,
-      life: MODAL_LIFE,
-    });
-  }
-
-  errorNotification(message: string) {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Bład',
-      detail: message,
-      life: MODAL_LIFE,
     });
   }
 
@@ -141,7 +129,11 @@ export class LineComponent implements OnInit {
 
   deleteBusStop(id: number) {
     this.http.delete(API_URL + '/admin/stops/' + id).subscribe({
-      error: (err) => console.log("Couldn't delete route", err),
+      next: () => {
+        this.fetchAllLines(),
+          this.notification.success("Poprawnie usunięto wskazany przystanek")
+      },
+      error: () => this.notification.error("Wystąpił błąd podczas usuwania przystanku")
     });
   }
 }

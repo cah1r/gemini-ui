@@ -1,7 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Line } from '../../../shared/model/line';
-import { DialogModule } from 'primeng/dialog';
-import { DropdownModule } from 'primeng/dropdown';
+import { HttpClient } from '@angular/common/http';
+import { Component, EventEmitter, Output } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -9,12 +7,14 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { Button } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
+import { NotificationService } from '../../../services/notification-factory.service';
+import { API_URL } from '../../../shared/constants';
 import { CreateStop } from '../../../shared/model/bus-stop';
-import { API_URL, MODAL_LIFE } from '../../../shared/constants';
-import { MessageService } from 'primeng/api';
+import { Line } from '../../../shared/model/line';
 
 @Component({
   selector: 'app-new-stop-modal',
@@ -31,6 +31,9 @@ import { MessageService } from 'primeng/api';
   styleUrl: './new-stop-modal.component.css',
 })
 export class NewStopModalComponent {
+
+  @Output() stopCreated = new EventEmitter<void>();
+
   display = false;
   newStopForm: FormGroup;
   private line: Line | undefined;
@@ -38,7 +41,7 @@ export class NewStopModalComponent {
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
-    private messageService: MessageService
+    private notification: NotificationService
   ) {
     this.newStopForm = this.fb.group({
       town: ['', Validators.required],
@@ -61,25 +64,16 @@ export class NewStopModalComponent {
       };
 
       this.http
-        .post<CreateStop>(API_URL + '/admin/stop/create', stop)
+        .post<CreateStop>(API_URL + '/admin/stops', stop)
         .subscribe({
           next: (data) => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Sukces',
-              detail: `Przystanek w miejscowości ${stop.town} został dodany do bazy danych`,
-              life: MODAL_LIFE,
-            });
+            this.notification.success(`Przystanek w miejscowości ${stop.town} został dodany do bazy danych`)
             this.display = false;
             this.newStopForm.reset();
+            this.stopCreated.emit();
           },
-          error: () => {
-            console.log('Błąd zapisu przystanku ');
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Błąd',
-              detail: `Błąd zapisu przystanku w bazie. Spróbuj ponownie lub sprawdź logi`,
-            });
+          error: (e) => {
+            this.notification.error('Błąd zapisu przystanku')
           },
         });
     }
