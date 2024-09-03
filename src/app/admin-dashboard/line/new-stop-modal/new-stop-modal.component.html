@@ -1,0 +1,48 @@
+<p-dialog
+  header="Nowy Przystanek"
+  [modal]="true"
+  [(visible)]="display"
+  [closable]="true"
+  [style]="{ minWidth: '30rem', maxWidth: '36rem' }"
+  #modalContainer
+>
+  <div class="flex flex-col gap-4 p-fluid">
+    <form [formGroup]="newStopForm" (ngSubmit)="onSubmit()">
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col">
+          <input
+            pInputText
+            id="town"
+            aria-describedby="town-help"
+            formControlName="town"
+            placeholder="Miejscowość"
+          />
+          <small id="town-help" class="ml-2 text-neutral-400">*Wymagane</small>
+        </div>
+
+        <input
+          pInputText
+          id="description"
+          formControlName="description"
+          placeholder="Dodatkowe informacje"
+        />
+      </div>
+
+      <div class="flex justify-end gap-2 mt-6">
+        <p-button
+          label="Anuluj"
+          icon="pi pi-times"
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="onCancel()"
+        />
+        <p-button
+          label="Dodaj"
+          icon="pi pi-check"
+          [disabled]="newStopForm.invalid"
+          (onClick)="onSubmit()"
+        />
+      </div>
+    </form>
+  </div>
+</p-dialog>

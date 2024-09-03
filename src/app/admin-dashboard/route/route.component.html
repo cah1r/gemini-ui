@@ -1,0 +1,124 @@
+<div class="shadow-xl w-full">
+  <p-table
+    #dt
+    [value]="allRoutes"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [globalFilterFields]="[
+      'originStop.town',
+      'originStop.details',
+      'destinationStop.town',
+      'destinationStop.details'
+    ]"
+    styleClass="p-datatable-sm"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex justify-between items-center p-3">
+        <p class="text-lg">Dostępne trasy</p>
+        <div class="flex">
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input
+              pInputText
+              type="text"
+              (input)="onGlobalFilter($event)"
+              placeholder="Szukaj słowa kluczowe"
+            />
+          </p-iconField>
+        </div>
+        <p-button
+          label="Dodaj"
+          size="small"
+          [outlined]="true"
+          (onClick)="newRouteModal.show()"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 30%" class="ps-9">Miasto wyjazdu</th>
+        <th style="width: 30%">Miasto przyjazdu</th>
+        <th style="width: 10%">Cena</th>
+        <th style="width: 10%">Bilet online</th>
+        <th style="width: 10%" class="text-center">Status</th>
+        <th style="width: 10%"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-route>
+      <tr>
+        <td class="p-0 ps-9 h-auto">
+          {{ formatCityInfo(route.originStop.town, route.originStop.details) }}
+        </td>
+        <td class="p-0 h-auto">
+          {{
+            formatCityInfo(
+              route.destinationStop.town,
+              route.destinationStop.details
+            )
+          }}
+        </td>
+        <td class="p-0 h-auto">{{ route.price | number : "1.2-2" }} zł</td>
+        <td>
+          <p-inputSwitch
+            [(ngModel)]="route.isTicketAvailable"
+            (onChange)="setTicketAvailability($event, route)"
+          />
+        </td>
+        <td>
+          <p-tag
+            class="flex justify-center"
+            [value]="mapBooleanToStatus(route.isActive)"
+            [severity]="getSeverity(route.isActive)"
+            [rounded]="true"
+          />
+        </td>
+        <td class="flex gap-3 justify-end p-0 py-1 pe-9 h-auto">
+          <p-button
+            *ngIf="route.isActive"
+            severity="contrast"
+            icon="pi pi-minus-circle"
+            [rounded]="true"
+            [text]="true"
+            (click)="setActiveStatus(route.id, false)"
+          />
+          <p-button
+            *ngIf="!route.isActive"
+            severity="success"
+            icon="pi pi-check-circle"
+            [rounded]="true"
+            [text]="true"
+            (click)="setActiveStatus(route.id, true)"
+          />
+          <p-button
+            severity="danger"
+            icon="pi pi-trash"
+            [rounded]="true"
+            [text]="true"
+            (click)="onDeleteRoute(route.id)"
+          />
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="6">Nie znaleziono żadnych tras w bazie danych.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-paginator
+    styleClass="paginator-override"
+    (onPageChange)="loadRoutes($event)"
+    [first]="first"
+    [rows]="rows"
+    [totalRecords]="totalRecords"
+  />
+</div>
+
+<p-confirmDialog></p-confirmDialog>
+
+<app-new-route-modal
+  #newRouteModal
+  (routeCreated)="onRouteCreated()"
+></app-new-route-modal>

@@ -1,18 +1,7 @@
-<div class="bg-white">
-  <app-header></app-header>
-
-  <div class="relative h-screen overflow-hidden">
-    <div class="absolute inset-0 bg-cover bg-center filter blur scale-110" style="background-image: url('/assets/warsaw.jpg');"></div>
-    <div class="absolute inset-0 bg-black opacity-50"></div>
-    <div class="relative h-full flex items-center justify-center text-white">
-      <div class="text-center">
-<!--        <h1 class="text-5xl font-bold">Gemini UI</h1>-->
-        <app-ticket-bundle></app-ticket-bundle>
-        <app-route-manager></app-route-manager>
-      </div>
-    </div>
-  </div>
+<app-navbar></app-navbar>
+<div
+  class="flex-1 router-container"
+  [@fadeAnimation]="getRouteAnimationData(outlet)"
+>
+  <router-outlet #outlet="outlet"></router-outlet>
 </div>
-
-
-<router-outlet></router-outlet>

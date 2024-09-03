@@ -1,0 +1,23 @@
+<div class="flex w-full">
+  <div
+    class="flex flex-col bg-neutral-100 w-1/6 shadow-xl"
+    style="height: calc(100vh - 81px)"
+  >
+    <p
+      class="text-center my-8 font-light text-3xl tracking-widest text-neutral-500"
+    >
+      Dashboard
+    </p>
+    <p-panelMenu [model]="items" class="min-w-56">
+      <ng-template p-template="item" let-item>
+        <a pRipple class="flex align-items center px-3 cursor-pointer">
+          <i [class]="item.icon + ' text-primary'"></i>
+          <span class="ml-2">{{ item.label }}</span>
+        </a>
+      </ng-template>
+    </p-panelMenu>
+  </div>
+  <div class="w-full p-12 overflow-auto" style="height: calc(100vh - 81px)">
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -1,41 +1,32 @@
-import {Component, OnInit} from '@angular/core';
-import {DataViewModule} from "primeng/dataview";
-import {NgClass, NgForOf, NgIf} from "@angular/common";
-import {Button} from "primeng/button";
-import {TagModule} from "primeng/tag";
-import {TicketBundle} from "./model/ticket-bundle";
-import {HttpClient} from "@angular/common/http";
-import {API_URL} from "../../shared/constants";
-import {BusStop} from "./model/bus-stop";
+import { Component, OnInit } from '@angular/core';
+import { DataViewModule } from 'primeng/dataview';
+import { NgClass, NgForOf, NgIf } from '@angular/common';
+import { Button } from 'primeng/button';
+import { TagModule } from 'primeng/tag';
+import { TicketBundle } from '../../shared/model/ticket-bundle';
+import { HttpClient } from '@angular/common/http';
+import { API_URL } from '../../shared/constants';
+import { CreateStop } from '../../shared/model/bus-stop';
 
 @Component({
   selector: 'app-ticket-bundle',
   standalone: true,
-  imports: [
-    DataViewModule,
-    NgForOf,
-    Button,
-    TagModule,
-    NgIf,
-    NgClass
-  ],
+  imports: [DataViewModule, NgForOf, Button, TagModule, NgIf, NgClass],
   templateUrl: './ticket-bundle.component.html',
-  styleUrl: './ticket-bundle.component.css'
+  styleUrl: './ticket-bundle.component.css',
 })
 export class TicketBundleComponent implements OnInit {
-
-  private _showTicketBundles: boolean = false
-  private _ticketBundleList: TicketBundle[] = []
-  private _busStops: BusStop[] = []
+  private _showTicketBundles: boolean = false;
+  private _ticketBundleList: TicketBundle[] = [];
+  private _busStops: CreateStop[] = [];
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.http.get<BusStop[]>(API_URL + '/bus-stop/get-all').subscribe({
-      next: busStopList => this._busStops = busStopList,
-      error: e => console.error(`Couldn't fetch bus stop list`, e)
-      }
-    )
+    this.http.get<CreateStop[]>(API_URL + '/bus-stop/get-all').subscribe({
+      next: (busStopList) => (this._busStops = busStopList),
+      error: (e) => console.error(`Couldn't fetch bus stop list`, e),
+    });
   }
 
   get showTicketBundles(): boolean {
@@ -46,8 +37,7 @@ export class TicketBundleComponent implements OnInit {
     return this._ticketBundleList;
   }
 
-  get busStops(): BusStop[] {
+  get busStops(): CreateStop[] {
     return this._busStops;
   }
-
 }

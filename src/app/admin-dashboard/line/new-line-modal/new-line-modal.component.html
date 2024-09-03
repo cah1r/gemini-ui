@@ -1,0 +1,41 @@
+<p-dialog
+  header="Nowa linia"
+  [modal]="true"
+  [(visible)]="display"
+  [closable]="true"
+  [style]="{ width: '25rem' }"
+  #modalContainer
+>
+  <div class="flex flex-col gap-4 p-fluid">
+    <form [formGroup]="newLineForm" (ngSubmit)="onSubmit()">
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-4">
+          <input
+            p-InputText
+            id="description"
+            formControlName="description"
+            placeholder="Nazwa linii"
+            class="p-2 border-2 rounded-lg"
+          />
+        </div>
+        <div class="flex justify-end gap-2 mt-6">
+          <p-button
+            label="Anuluj"
+            icon="pi pi-times"
+            severity="secondary"
+            size="small"
+            [outlined]="true"
+            (onClick)="onCancel()"
+          />
+          <p-button
+            label="Dodaj"
+            icon="pi pi-check"
+            size="small"
+            [disabled]="newLineForm.invalid"
+            (onClick)="onSubmit()"
+          />
+        </div>
+      </div>
+    </form>
+  </div>
+</p-dialog>
