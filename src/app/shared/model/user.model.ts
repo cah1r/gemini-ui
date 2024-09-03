@@ -1,8 +1,9 @@
 export interface CreateUser {
   email: string;
-  firstName?: string;
-  lastName?: string;
-  phoneNumber?: number;
+  firstName: string;
+  lastName: string;
+  phoneNumber: number;
+  password: string;
 }
 
 export interface LoginUser {

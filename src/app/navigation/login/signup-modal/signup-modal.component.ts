@@ -7,11 +7,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { AuthGoogleService } from '../../../services/auth-google.service';
+import { NotificationService } from '../../../services/notification-factory.service';
 import { API_URL } from '../../../shared/constants';
 import { CreateUser } from '../../../shared/model/user.model';
 import { LoginNavComponent } from '../login-nav/login-nav.component';
@@ -30,7 +30,7 @@ import { LoginNavComponent } from '../login-nav/login-nav.component';
   styleUrl: './signup-modal.component.css',
 })
 export class SignupModalComponent {
-  createUserPath = '/user/create';
+
   user: CreateUser | undefined;
   display: boolean = false;
   signupForm: FormGroup;
@@ -39,14 +39,16 @@ export class SignupModalComponent {
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
-    private messageService: MessageService,
+    private notification: NotificationService,
     private authService: AuthGoogleService,
     private loginComponent: LoginNavComponent
   ) {
     this.signupForm = this.fb.group(
       {
-        phoneNumber: ['', Validators.pattern(/^\d{9}$/)],
+        phoneNumber: ['', [Validators.required, Validators.pattern(/^\d{9}$/)]],
         email: ['', [Validators.required, Validators.email]],
+        firstName: ['', [Validators.required, Validators.minLength(3), Validators.pattern('^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ ]*$')]],
+        lastName: ['', [Validators.required, Validators.minLength(3), Validators.pattern('^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ ]*$')]],
         password: ['', [Validators.required, Validators.minLength(8)]],
         confirmPassword: ['', Validators.required],
       },
@@ -69,24 +71,27 @@ export class SignupModalComponent {
       this.user = {
         email: this.signupForm.get('email')?.value,
         phoneNumber: this.signupForm.get('phoneNumber')?.value,
-        // password: this.signupForm.get('password')?.value
+        firstName: this.signupForm.get('firstName')?.value,
+        lastName: this.signupForm.get('lastName')?.value,
+        password: this.signupForm.get('password')?.value,
       };
 
       this.http
-        .post<any>(API_URL + this.createUserPath, this.user, {
+        .post<any>(API_URL + '/auth/signup', this.user, {
           withCredentials: true,
         })
         .subscribe({
           next: () => {
             this.onCancel();
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Sukces',
-              detail: 'Konto zostało poprawnie utworzone. Możesz się zalogować',
-              life: 5000,
-            });
+            this.notification.success('Konto zostało poprawnie utworzone. Możesz się zalogować')
           },
-          error: console.error,
+          error: (error) => {
+            if (error.status === 409) {
+              this.notification.error('Użytkownik o podanym adresie e-mail już istnieje')
+            } else {
+              this.notification.error('Wystąpił błąd podczas tworzenia konta. Spróbuj ponownie później')
+            }
+          }
         });
     }
   }
