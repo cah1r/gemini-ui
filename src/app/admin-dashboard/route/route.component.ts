@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -19,8 +19,8 @@ import { InputSwitchChangeEvent, InputSwitchModule } from 'primeng/inputswitch';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { AuthService } from '../../services/auth.service';
-import { API_URL, MODAL_LIFE } from '../../shared/constants';
+import { NotificationService } from '../../services/notification-factory.service';
+import { API_URL } from '../../shared/constants';
 import { Page } from '../../shared/model/page';
 import { RouteDto } from '../../shared/model/route';
 import { NewRouteModalComponent } from './new-route-modal/new-route-modal.component';
@@ -69,9 +69,8 @@ export class RouteComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService,
-    private authService: AuthService
-  ) {}
+    private notification: NotificationService,
+  ) { }
 
   oneOfTwo(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -107,12 +106,11 @@ export class RouteComponent implements OnInit {
     this.http.get<Page<RouteDto>>(API_URL + `/routes`, { params }).subscribe({
       next: (data) => {
         this._allRoutes = data.content;
-        this.totalRecords = data.totalElements;
+        this.totalRecords = data.page.totalElements;
         this.currentPage = event.page!;
+        console.log(JSON.stringify(event))
       },
-      error: (err) => {
-        console.log("Couldn't fetch routes from backend service", err);
-      },
+      error: () => this.notification.error('Wystąpił błąd podczas pobierania tras')
     });
   }
 
@@ -148,13 +146,8 @@ export class RouteComponent implements OnInit {
         { withCredentials: true }
       )
       .subscribe({
-        error: (e) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Błąd',
-            detail: 'Wystąpił błąd podczas zmiany statusu',
-            life: MODAL_LIFE,
-          });
+        error: () => {
+          this.notification.error('Wystąpił błąd podczas zmiany statusu')
           route.isTicketAvailable = !event.checked;
         },
       });
@@ -180,6 +173,7 @@ export class RouteComponent implements OnInit {
       )
       .subscribe({
         next: () => this.loadRoutes({ page: this.currentPage }),
+        error: () => this.notification.error('Wystąpił błąd podczas zmiany statusu')
       });
   }
 
