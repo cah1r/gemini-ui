@@ -12,8 +12,8 @@ import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { CreateLineDto, Line } from '../../../shared/model/line';
 import { API_URL, MODAL_LIFE } from '../../../shared/constants';
+import { CreateLineDto } from '../../../shared/model/line';
 
 @Component({
   selector: 'app-new-line-modal',
@@ -51,7 +51,7 @@ export class NewLineModalComponent {
     const line: CreateLineDto = {
       description: this.newLineForm.get('description')?.value,
     };
-    this.http.post(API_URL + '/admin/line/create', line).subscribe({
+    this.http.post(API_URL + '/admin/lines', line).subscribe({
       next: () => {
         this.lineCreatedNotification(line.description);
         this.newLineForm.reset();

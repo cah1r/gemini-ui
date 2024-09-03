@@ -3,13 +3,11 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
 import { DriversComponent } from './admin-dashboard/drivers/drivers.component';
 import { LineComponent } from './admin-dashboard/line/line.component';
 import { RouteComponent } from './admin-dashboard/route/route.component';
-import { PostRegistrationComponent } from './navigation/post-registration.component';
 import { MainPageComponent } from './pages/main-page/main-page.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { AdminGuard } from './services/admin.guard';
 
 export const routes: Routes = [
-  { path: 'post-sign-in', component: PostRegistrationComponent },
   {
     path: 'index',
     component: MainPageComponent,
@@ -18,7 +16,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminDashboardComponent,
-    // canActivate: [AdminGuard],
+    canActivate: [AdminGuard],
     children: [
       { path: '', redirectTo: 'routes', pathMatch: 'full' },
       { path: 'routes', component: RouteComponent },

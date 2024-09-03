@@ -13,14 +13,10 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputNumberModule } from 'primeng/inputnumber';
-import {
-  CreateStop,
-  StopWithLineDto,
-  Stop,
-} from '../../../shared/model/bus-stop';
+import { API_URL } from '../../../shared/constants';
+import { StopWithLineDto } from '../../../shared/model/bus-stop';
 import { Line } from '../../../shared/model/line';
 import { RouteDto } from '../../../shared/model/route';
-import { API_URL } from '../../../shared/constants';
 
 @Component({
   selector: 'app-new-route-modal',
@@ -80,7 +76,7 @@ export class NewRouteModalComponent implements OnInit {
   }
 
   fetchAllLines() {
-    this.http.get<Line[]>(API_URL + '/admin/line/get-all').subscribe({
+    this.http.get<Line[]>(API_URL + '/admin/lines').subscribe({
       next: (fetchedLines) => (this._availableLines = fetchedLines),
       error: (e) =>
         console.log(
@@ -91,16 +87,14 @@ export class NewRouteModalComponent implements OnInit {
   }
 
   fetchAllBusStops() {
-    this.http
-      .get<StopWithLineDto[]>(API_URL + '/admin/stop/get-all')
-      .subscribe({
-        next: (fetchedData) => (this._allBusStops = fetchedData),
-        error: (e) =>
-          console.log(
-            'Error occurred while fetching bus stops from backend service.',
-            e
-          ),
-      });
+    this.http.get<StopWithLineDto[]>(API_URL + '/admin/stops').subscribe({
+      next: (fetchedData) => (this._allBusStops = fetchedData),
+      error: (e) =>
+        console.log(
+          'Error occurred while fetching bus stops from backend service.',
+          e
+        ),
+    });
   }
 
   show() {

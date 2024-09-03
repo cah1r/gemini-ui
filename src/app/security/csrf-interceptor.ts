@@ -6,6 +6,7 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { couldStartTrivia } from 'typescript';
 
 @Injectable()
 export class CsrfInterceptor implements HttpInterceptor {
@@ -19,7 +20,7 @@ export class CsrfInterceptor implements HttpInterceptor {
     const match = document.cookie.match(this.XSRF_REGEX);
     const xsrfToken = match ? match[1] : '';
 
-    if (req.url.startsWith(this.apiBaseUrl) && xsrfToken) {
+    if (req.url.startsWith(this.apiBaseUrl) && xsrfToken != '') {
       const clonedRequest = req.clone({
         headers: req.headers.set('X-XSRF-TOKEN', xsrfToken),
         withCredentials: true,

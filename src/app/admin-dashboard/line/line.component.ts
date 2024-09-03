@@ -7,18 +7,18 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { InputTextModule } from 'primeng/inputtext';
-import { PanelModule } from 'primeng/panel';
-import { API_URL, MODAL_LIFE } from '../../shared/constants';
+import { AccordionModule } from 'primeng/accordion';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { Line } from '../../shared/model/line';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { InputTextModule } from 'primeng/inputtext';
+import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
-import { NewLineModalComponent } from './new-line-modal/new-line-modal.component';
-import { AccordionModule } from 'primeng/accordion';
+import { API_URL, MODAL_LIFE } from '../../shared/constants';
 import { Stop } from '../../shared/model/bus-stop';
+import { Line } from '../../shared/model/line';
+import { NewLineModalComponent } from './new-line-modal/new-line-modal.component';
 import { NewStopModalComponent } from './new-stop-modal/new-stop-modal.component';
 
 @Component({
@@ -80,14 +80,14 @@ export class LineComponent implements OnInit {
   }
 
   updateStopsOrder(stops: Stop[]) {
-    this.http.put(API_URL + '/admin/stop/update-order', stops).subscribe();
+    this.http.put(API_URL + '/admin/stops', stops).subscribe();
   }
 
   onSubmit() {
     const line: Line = {
       description: this.newLineForm.get('lineDescription')?.value,
     };
-    this.http.post(API_URL + '/admin/line/create', line).subscribe({
+    this.http.post(API_URL + '/admin/lines', line).subscribe({
       next: () => this.lineCreatedNotification(line.description),
       error: () =>
         this.errorNotification('Wystapił bład podczas tworzenia nowej linii'),
@@ -96,7 +96,7 @@ export class LineComponent implements OnInit {
   }
 
   fetchAllLines() {
-    this.http.get<Line[]>(API_URL + '/admin/line/get-all').subscribe({
+    this.http.get<Line[]>(API_URL + '/admin/lines').subscribe({
       next: (fetchedLines) => (this._allLines = fetchedLines),
     });
   }
@@ -140,7 +140,7 @@ export class LineComponent implements OnInit {
   }
 
   deleteBusStop(id: number) {
-    this.http.delete(API_URL + '/admin/stop/delete/' + id).subscribe({
+    this.http.delete(API_URL + '/admin/stops/' + id).subscribe({
       error: (err) => console.log("Couldn't delete route", err),
     });
   }

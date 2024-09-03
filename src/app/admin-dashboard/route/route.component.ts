@@ -1,5 +1,5 @@
 import { CommonModule, CurrencyPipe, DecimalPipe, NgIf } from '@angular/common';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
@@ -104,18 +104,16 @@ export class RouteComponent implements OnInit {
       .set('page', event.page!)
       .set('size', this.rows);
 
-    this.http
-      .get<Page<RouteDto>>(API_URL + `/route/get-all`, { params })
-      .subscribe({
-        next: (data) => {
-          this._allRoutes = data.content;
-          this.totalRecords = data.totalElements;
-          this.currentPage = event.page!;
-        },
-        error: (err) => {
-          console.log("Couldn't fetch routes from backend service", err);
-        },
-      });
+    this.http.get<Page<RouteDto>>(API_URL + `/routes`, { params }).subscribe({
+      next: (data) => {
+        this._allRoutes = data.content;
+        this.totalRecords = data.totalElements;
+        this.currentPage = event.page!;
+      },
+      error: (err) => {
+        console.log("Couldn't fetch routes from backend service", err);
+      },
+    });
   }
 
   onDeleteRoute(id: string) {
@@ -134,7 +132,7 @@ export class RouteComponent implements OnInit {
   }
 
   private deleteRoute(id: string) {
-    this.http.delete(API_URL + '/route/delete/' + id).subscribe({
+    this.http.delete(API_URL + '/routes/' + id).subscribe({
       next: () => this.loadRoutes({ page: this.currentPage }),
       error: (err) => console.log("Couldn't delete route", err),
     });
@@ -143,7 +141,7 @@ export class RouteComponent implements OnInit {
   setTicketAvailability(event: InputSwitchChangeEvent, route: RouteDto) {
     this.http
       .patch(
-        API_URL + '/route/set-ticket-availability/' + route.id,
+        API_URL + `/routes/${route.id}/set-ticket-availability`,
         {
           isTicketAvailable: event.checked,
         },
@@ -173,7 +171,7 @@ export class RouteComponent implements OnInit {
   setActiveStatus(id: string, status: boolean) {
     this.http
       .patch<any>(
-        API_URL + '/route/set-status',
+        API_URL + `/routes/${id}/set-status`,
         {
           id: id,
           isActive: status,
