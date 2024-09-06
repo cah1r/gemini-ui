@@ -1,1 +1,58 @@
-<p>drivers works!</p>
+<div class="shadow-xl w-full">
+  <p-table #dt dataKey="id" [value]="allDrivers" [tableStyle]="{ 'min-width': '50rem' }" styleClass="p-datatable-sm"
+    [globalFilterFields]="['firstName', 'lastName', 'phoneNumber']">
+    <ng-template pTemplate="caption">
+      <div class="flex justify-between items-center p-3">
+        <p class="text-lg">Kierowcy</p>
+        <div class="flex">
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+              placeholder="Szukaj słowa kluczowe" />
+          </p-iconField>
+        </div>
+        <p-button label="Dodaj" size="small" [outlined]="true" (onClick)="newDriverModal.show()" />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 30%" class="ps-9">Imię</th>
+        <th style="width: 30%">Nazwisko</th>
+        <th style="width: 25%">Telefon</th>
+        <th style="width: 240px; padding-left: 4rem;">Status</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-driver>
+      <tr>
+        <td class="p-0 ps-9 h-auto">{{ driver.firstName }}</td>
+        <td class="p-0 h-auto">{{ driver.lastName }}</td>
+        <td class="p-0 h-auto">{{ driver.phoneNumber }}</td>
+        <td class="min-w-60">
+          <div class="flex flex-row items-center justify-between">
+            <div class="flex flex-row items-center">
+              <p-button size="large" *ngIf="driver.isActive" severity="contrast" icon="pi pi-minus-circle"
+                [rounded]="true" [text]="true" (click)="setActiveStatus(driver.id, false)" />
+              <p-button *ngIf="!driver.isActive" severity="success" icon="pi pi-check-circle" [rounded]="true"
+                [text]="true" (click)="setActiveStatus(driver.id, true)" />
+              <p-tag [value]="mapBooleanToStatus(driver.isActive)" [severity]="getSeverity(driver.isActive)"
+                [rounded]="true" />
+            </div>
+            <p-button severity="danger" icon="pi pi-trash" [rounded]="true" [text]="true" class="ml-6"
+              (click)="onDeleteDriver(driver.id)" />
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="4">Nie znaleziono kierowców w bazie danych.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <app-new-driver-modal #newDriverModal (driverCreated)="onDriverCreated()"></app-new-driver-modal>
+  <p-confirmDialog></p-confirmDialog>
+</div>

@@ -9,3 +9,9 @@ export interface Line {
 export interface CreateLineDto {
   description: string;
 }
+
+export interface LineViewDto {
+  id: number
+  description: string
+  stopsCount: number
+}

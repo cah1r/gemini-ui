@@ -18,3 +18,11 @@ export interface RouteDto {
   destinationStop: StopDto;
   isActive: boolean;
 }
+
+export interface CreateRouteDto {
+  originStopId: string;
+  destinationStopId: string;
+  price: BigNumber;
+  isActive: boolean;
+  isTicketAvailable: boolean;
+}

@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import {
   FormBuilder,
@@ -13,10 +12,13 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { API_URL } from '../../../shared/constants';
+import { NotificationService } from '../../../services/notification-factory.service';
 import { StopWithLineDto } from '../../../shared/model/bus-stop';
 import { Line } from '../../../shared/model/line';
-import { RouteDto } from '../../../shared/model/route';
+import { LineService } from '../../services/line.service';
+import { RouteService } from '../../services/route.service';
+import { StopService } from '../../services/stop.service';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-new-route-modal',
@@ -30,11 +32,12 @@ import { RouteDto } from '../../../shared/model/route';
     InputNumberModule,
     CheckboxModule,
     DropdownModule,
+    NgIf,
   ],
   templateUrl: './new-route-modal.component.html',
   styleUrl: './new-route-modal.component.css',
 })
-export class NewRouteModalComponent implements OnInit {
+export class NewRouteModalComponent {
   private _availableLines: Line[] = [];
   private _allBusStops: StopWithLineDto[] = [];
   private _matchingBusStops: StopWithLineDto[] = [];
@@ -44,8 +47,14 @@ export class NewRouteModalComponent implements OnInit {
   display = false;
   newRouteForm: FormGroup;
 
-  constructor(private http: HttpClient, private fb: FormBuilder) {
-    this.newRouteForm = fb.group({
+  constructor(
+    private routeService: RouteService,
+    private lineService: LineService,
+    private stopService: StopService,
+    private fb: FormBuilder,
+    private notification: NotificationService
+  ) {
+    this.newRouteForm = this.fb.group({
       selectedLine: [null, Validators.required],
       initialStop: [{ value: null, disabled: true }, Validators.required],
       lastStop: [{ value: null, disabled: true }, Validators.required],
@@ -70,65 +79,60 @@ export class NewRouteModalComponent implements OnInit {
       });
   }
 
-  ngOnInit() {
-    this.fetchAllLines();
-    this.fetchAllBusStops();
-  }
-
   fetchAllLines() {
-    this.http.get<Line[]>(API_URL + '/admin/lines').subscribe({
+    this.lineService.fetchAllLines().subscribe({
       next: (fetchedLines) => (this._availableLines = fetchedLines),
-      error: (e) =>
-        console.log(
-          'Error occurred while fetching lines from backend service.',
-          e
-        ),
+      error: () => this.notification.error('Wystąpił błąd podczas pobierania linii')
     });
   }
 
   fetchAllBusStops() {
-    this.http.get<StopWithLineDto[]>(API_URL + '/admin/stops').subscribe({
+    this.stopService.fetchAllStops().subscribe({
       next: (fetchedData) => (this._allBusStops = fetchedData),
-      error: (e) =>
-        console.log(
-          'Error occurred while fetching bus stops from backend service.',
-          e
-        ),
+      error: () => this.notification.error('Wystąpił błąd podczas pobierania przystanków')
     });
   }
 
   show() {
     this.display = true;
+    this.fetchAllLines();
+    this.fetchAllBusStops();
+  }
+
+  hide() {
+    this.display = false
   }
 
   onSubmit() {
     const initialStop = this.newRouteForm.get('initialStop')?.value;
     const lastStop = this.newRouteForm.get('lastStop')?.value;
 
-    const routeDto = {
+    const createRouteDto = {
       originStopId: initialStop ? initialStop.id : null,
       destinationStopId: lastStop ? lastStop.id : null,
       price: this.newRouteForm.get('price')?.value,
       isActive: this.newRouteForm.get('isActive')?.value,
       isTicketAvailable: this.newRouteForm.get('isTicketAvailable')?.value,
     };
-    this.http.post<RouteDto>(API_URL + '/route/create', routeDto).subscribe({
+    this.routeService.createRoute(createRouteDto).subscribe({
       next: () => {
-        this.newRouteForm.reset();
-        this.newRouteForm.get(['isActive'])!.setValue(true);
-        this.newRouteForm.get(['isTicketAvailable'])!.setValue(true);
-        this.display = false;
-        this.routeCreated.emit();
+        this.resetForm()
+        this.display = false
+        this.routeCreated.emit()
       },
       error: (err) => console.log("Couldn't create route", err),
     });
   }
 
-  onCancel() {
+  private resetForm() {
     this.newRouteForm.reset();
     this.newRouteForm.get('initialStop')?.disable();
-    this.newRouteForm.get('isActive')?.setValue(true);
-    this.newRouteForm.get('isTicketAvailable')?.setValue(true);
+    this.newRouteForm.get(['isActive'])!.setValue(true);
+    this.newRouteForm.get(['isTicketAvailable'])!.setValue(true);
+  }
+
+  onCancel() {
+    this.resetForm()
     this.display = false;
   }
 

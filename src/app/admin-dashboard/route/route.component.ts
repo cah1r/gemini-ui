@@ -55,7 +55,7 @@ import { NewRouteModalComponent } from './new-route-modal/new-route-modal.compon
   styleUrl: './route.component.css',
 })
 export class RouteComponent implements OnInit {
-  @ViewChild('dt') dt: any;
+  @ViewChild('newRouteModal') newRouteModal!: NewRouteModalComponent
   private _allRoutes: RouteDto[] = [];
 
   keyword: string = '';
@@ -82,7 +82,14 @@ export class RouteComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('RouteComponent initialized');
     this.loadRoutes({ page: 0 });
+  }
+
+  openNewRouteModal() {
+    if (this.newRouteModal) {
+      this.newRouteModal.show()
+    }
   }
 
   get allRoutes(): RouteDto[] {
@@ -91,6 +98,9 @@ export class RouteComponent implements OnInit {
 
   onRouteCreated() {
     this.loadRoutes({ page: this.currentPage });
+    if (this.newRouteModal) {
+      this.newRouteModal.hide()
+    }
   }
 
   onGlobalFilter(event: Event) {
@@ -110,8 +120,12 @@ export class RouteComponent implements OnInit {
         this.currentPage = event.page!;
         console.log(JSON.stringify(event))
       },
-      error: () => this.notification.error('Wystąpił błąd podczas pobierania tras')
-    });
+      error: (e) => {
+        if (e.status !== 401) {
+          this.notification.error('Wystąpił błąd podczas pobierania tras')
+        }
+      },
+    })
   }
 
   onDeleteRoute(id: string) {

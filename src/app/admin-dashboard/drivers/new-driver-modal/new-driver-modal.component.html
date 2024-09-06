@@ -1,0 +1,72 @@
+<p-dialog header="Dodaj kierowcę" [modal]="true" [(visible)]="display" [closable]="true" [style]="{ width: '25rem' }"
+  #modalContainer>
+  <div class="flex flex-col gap-7 p-fluid">
+    <form [formGroup]="newDriverForm" (ngSubmit)="onSubmit()">
+      <div class="flex flex-col gap-5">
+        <div class="flex flex-col">
+          <label for="firstName">Imię</label>
+          <input pInputText formControlName="firstName" type="text"
+            [ngClass]="{'border-red-300': isFieldInvalid('firstName')}" />
+          <div class="h-[0.5rem]">
+            <small *ngIf="isFieldInvalid('firstName')" class="p-error">
+              <span *ngIf="newDriverForm.get('firstName')?.hasError('required')">
+                Imię jest wymagane.
+              </span>
+              <span *ngIf="newDriverForm.get('firstName')?.hasError('minlength')">
+                Minimum 3 litery.
+              </span>
+              <span *ngIf="newDriverForm.get('firstName')?.hasError('pattern')">
+                Niedozwolone znaki.
+              </span>
+            </small>
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <label for="lastName">Nazwisko</label>
+          <input pInputText id="lastName" formControlName="lastName" type="text"
+            [ngClass]="{'border-red-300': isFieldInvalid('lastName')}" />
+          <div class="h-[0.5rem]">
+            <small *ngIf="isFieldInvalid('lastName')" class="p-error">
+              <span *ngIf="newDriverForm.get('lastName')?.hasError('required')">
+                Nazwisko jest wymagane.
+              </span>
+              <span *ngIf="newDriverForm.get('lastName')?.hasError('minlength')">
+                Minimum 3 litery.
+              </span>
+              <span *ngIf="newDriverForm.get('lastName')?.hasError('pattern')">
+                Niedozwolone znaki.
+              </span>
+            </small>
+          </div>
+        </div>
+
+
+        <div class="flex flex-col">
+          <label for="phoneNumber">Numer telefonu</label>
+          <div class="flex items-center justify-between">
+            <p-inputMask id="phoneNumber" formControlName="phoneNumber" mask="999-999-999" placeholder="000-000-000"
+              [ngClass]="{'ng-invalid ng-dirty': isFieldInvalid('phoneNumber')}"></p-inputMask>
+            <div class="flex items-center gap-2">
+              <p-checkbox formControlName="isActive" [binary]="true" inputId="isActive"></p-checkbox>
+              <label for="isActive">Aktywny</label>
+            </div>
+          </div>
+          <div class="h-[0.5rem]">
+            <small *ngIf="isFieldInvalid('phoneNumber')" class="p-error">
+              <span *ngIf="newDriverForm.get('phoneNumber')?.hasError('required')">
+                Numer telefonu jest wymagany.
+              </span>
+            </small>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 mt-2">
+          <p-button label="Anuluj" icon="pi pi-times" severity="secondary" size="small" [outlined]="true"
+            (onClick)="onCancel()" />
+          <p-button label="Dodaj" icon="pi pi-check" size="small" [disabled]="newDriverForm.invalid"
+            (onClick)="onSubmit()" />
+        </div>
+      </div>
+    </form>
+  </div>
+</p-dialog>
