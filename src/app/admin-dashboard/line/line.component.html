@@ -1,21 +1,10 @@
 <div class="shadow-xl pb-12 bg-white">
-  <p-table
-    #dt1
-    [value]="getAllLines"
-    dataKey="id"
-    [expandedRowKeys]="expandedStops"
-    styleClass="p-datatable-sm"
-  >
+  <p-table #dt1 [value]="allLines" dataKey="id" [expandedRowKeys]="expandedStops" styleClass="p-datatable-sm">
     <ng-template pTemplate="caption">
       <div class="flex gap-4 items-center justify-between p-3">
         <p class="text-lg">Dostępne linie</p>
         <div class="flex gap-2 items-center">
-          <p-button
-            label="Dodaj"
-            size="small"
-            [outlined]="true"
-            (onClick)="newLineModal.show()"
-          />
+          <p-button label="Dodaj" size="small" [outlined]="true" (onClick)="newLineModal.show()" />
         </div>
       </div>
     </ng-template>
@@ -25,88 +14,69 @@
         <th>Linia</th>
         <th class="flex justify-end pe-9"># przystanków</th>
       </tr>
-    </ng-template>
+      </ng-template>
 
-    <ng-template pTemplate="body" let-line let-expanded="expanded">
-      <tr class="px-3 py-1 m-0 h-auto">
-        <td class="py-1 ps-6 m-0 flex items-center justify-center h-auto">
-          <p-button
-            type="button"
-            pRipple
-            [pRowToggler]="line"
-            [text]="true"
-            [plain]="true"
-            [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
-            class="p-0 m-0 flex items-center justify-center h-auto"
-          ></p-button>
-        </td>
-        <td>{{ line.description }}</td>
-        <td class="flex justify-end pe-12">{{ countStops(line) }}</td>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="3">Nie znaleziono zadnych eleentów w bazie danych.</td>
-      </tr>
-    </ng-template>
-    <<ng-template pTemplate="rowexpansion" let-line>
-      <tr>
-        <td colspan="3">
-          <div class="py-3 px-16">
-            <p-table
-              [value]="line.stops"
-              dataKey="lineOrder"
-              styleClass="p-datatable-sm"
-              sortField="lineOrder"
-              pReorderableRows
-              (onRowReorder)="onRowReorder($event, line.stops)"
-            >
-              <ng-template pTemplate="header">
-                <tr>
-                  <th style="width: 48px"></th>
-                  <th>Nazwa przystanku</th>
-                  <th style="width: 72px" class="py-2 m-0 h-auto">
-                    <p-button
-                      label="Dodaj"
-                      size="small"
-                      [outlined]="true"
-                      (onClick)="newStopModal.openModal(line)"
-                    />
-                  </th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-stop let-index="rowIndex">
-                <tr [pReorderableRow]="index" class="px-3 py-1 m-0 h-auto">
-                  <td class="m-0 h-auto p-0">
-                    <span class="pi pi-bars" pReorderableRowHandle></span>
-                  </td>
-                  <td class="p-0 m-0 h-auto">
-                    {{ formatCityInfo(stop.town, stop.details) }}
-                  </td>
-                  <td class="p-0 m-0 h-auto flex justify-center">
-                    <p-button
-                      severity="danger"
-                      icon="pi pi-trash"
-                      [rounded]="true"
-                      [text]="true"
-                      (click)="onDeleteBusStop(stop.id)"
-                    />
-                  </td>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="emptymessage">
-                <tr>
-                  <td colspan="2">
-                    Nie znaleziono żadnych przystanków w bazie danych.
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
-          </div>
-        </td>
-      </tr>
-    </ng-template>
+      <ng-template pTemplate="body" let-line let-expanded="expanded">
+        <tr class="px-3 py-1 m-0 h-auto">
+          <td class="py-1 ps-6 m-0 flex items-center justify-center h-auto">
+            <p-button type="button" pRipple [pRowToggler]="line" [text]="true" [plain]="true"
+              [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+              class="p-0 m-0 flex items-center justify-center h-auto" (click)="fetchLineStops(line.id)">
+            </p-button>
+          </td>
+          <td>{{ line.description }}</td>
+          <td class="flex justify-end pe-12">{{ line.stopsCount }}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4">Nie znaleziono zadnych eleentów w bazie danych.</td>
+        </tr>
+      </ng-template>
+      <<ng-template pTemplate="rowexpansion" let-line>
+        <tr>
+          <td colspan="3">
+            <div class="py-3 px-16">
+              <p-table [value]="stopsCache[line.id]" dataKey="lineOrder" styleClass="p-datatable-sm"
+                sortField="lineOrder" pReorderableRows (onRowReorder)="onRowReorder($event, stopsCache[line.id])">
+                <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 48px"></th>
+          <th style="width: 48px">Lp.</th>
+          <th>Nazwa przystanku</th>
+          <th style="width: 72px" class="py-2 m-0 h-auto">
+            <p-button label="Dodaj" size="small" [outlined]="true" (onClick)="newStopModal.openModal(line)" />
+          </th>
+        </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-stop let-index="rowIndex">
+          <tr [pReorderableRow]="index" class="px-3 py-1 m-0 h-auto">
+            <td class="m-0 h-auto p-0">
+              <span class="pi pi-bars" pReorderableRowHandle></span>
+            </td>
+            <td>{{ stop.lineOrder }}.</td>
+            <td class="p-0 m-0 h-auto">
+              {{ formatCityInfo(stop.town, stop.details) }}
+            </td>
+            <td class="p-0 m-0 h-auto flex justify-center">
+              <p-button severity="danger" icon="pi pi-trash" [rounded]="true" [text]="true"
+                (click)="onDeleteBusStop(stop.id)" />
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="2">
+              Nie znaleziono żadnych przystanków w bazie danych.
+            </td>
+          </tr>
+        </ng-template>
   </p-table>
+</div>
+</td>
+</tr>
+</ng-template>
+</p-table>
 </div>
 <p-confirmDialog></p-confirmDialog>
 <app-new-line-modal #newLineModal></app-new-line-modal>

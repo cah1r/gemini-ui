@@ -1,20 +1,20 @@
 import { NgIf } from '@angular/common';
-import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { PaginatorModule } from 'primeng/paginator';
+import { LoginService } from '../../../admin-dashboard/services/login.service';
 import { AuthGoogleService } from '../../../services/auth-google.service';
 import { AuthService } from '../../../services/auth.service';
-import { API_URL, MODAL_LIFE } from '../../../shared/constants';
+import { NotificationService } from '../../../services/notification-factory.service';
 import { LoginUser, User } from '../../../shared/model/user.model';
 
 @Component({
@@ -31,8 +31,8 @@ import { LoginUser, User } from '../../../shared/model/user.model';
   templateUrl: './login-modal.component.html',
   styleUrl: './login-modal.component.css',
 })
-export class LoginModalComponent {
-  loginPath = '/auth/login';
+export class LoginModalComponent implements OnInit {
+
   display: boolean = false;
   loginForm: FormGroup;
   user: LoginUser | undefined;
@@ -40,8 +40,8 @@ export class LoginModalComponent {
   constructor(
     private googleService: AuthGoogleService,
     private authService: AuthService,
-    private http: HttpClient,
-    private messageService: MessageService,
+    private loginService: LoginService,
+    private notification: NotificationService,
     private fb: FormBuilder
   ) {
     this.loginForm = this.fb.group({
@@ -50,8 +50,12 @@ export class LoginModalComponent {
     });
   }
 
+  ngOnInit() {
+    this.loginService.onOpenModal().subscribe(isOpen => this.display = isOpen)
+  }
+
   show() {
-    this.display = true;
+    this.loginService.openModal()
   }
 
   signInWithGoogle() {
@@ -64,64 +68,32 @@ export class LoginModalComponent {
         email: this.loginForm.get('email')?.value,
         password: this.loginForm.get('password')?.value,
       };
-      this.sendHttpRequest();
+      this.sendRequest(this.user);
     }
   }
 
-  private sendHttpRequest() {
-    this.http
-      .post<User>(API_URL + this.loginPath, this.user, {
-        observe: 'response',
-        withCredentials: true,
-      })
+  private sendRequest(user: LoginUser) {
+    this.loginService.login(user)
       .subscribe({
         next: (response: HttpResponse<User>) => {
           const authHeader = response.headers.get('authorization');
           const token = authHeader ? authHeader.split(' ')[1] : null;
           if (token) {
             this.authService.login(token);
-            this.successLoginNotification();
-            this.display = false;
+            this.loginService.closeModal()
+            this.loginForm.reset()
+            this.loginService.setLoginSuccess(token)
+            // this.notification.success(`Zalogowano jako ${this.user?.email}`)
           } else {
-            this.tokenErrorNotification();
+            this.notification.error(`Błąd przetwarzania tokenu bezpieczeństwa. Spróbuj zalogować się ponownie`)
           }
         },
-        error: (e) => {
-          console.error(JSON.stringify(e));
-          this.failedLoginNotification();
-        },
+        error: () => this.notification.error(`Błąd logowania użytkownika ${this.user?.email}. Upewnij się, że email oraz hasło są poprawne.`)
       });
   }
 
   onCancel() {
-    this.display = false;
+    this.loginService.closeModal();
     this.loginForm.reset();
-  }
-
-  successLoginNotification() {
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Sukces',
-      detail: `Zalogowano jako ${this.user?.email}`,
-      life: MODAL_LIFE,
-    });
-  }
-
-  failedLoginNotification() {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Błąd',
-      detail: `Błąd logowania użytkownika ${this.user?.email}. Upewnij się, że email oraz hasło są poprawne.`,
-      life: MODAL_LIFE,
-    });
-  }
-
-  tokenErrorNotification() {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Błąd',
-      detail: `Błąd przetwarzania tokenu bezpieczeństwa. Spróbuj zalogować się ponownie`,
-      life: MODAL_LIFE,
-    });
   }
 }

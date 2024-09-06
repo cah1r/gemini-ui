@@ -10,9 +10,10 @@ import {
 } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { AuthInterceptorService } from './security/auth-interceptor.service';
+import { AuthInterceptor } from './security/auth-interceptor';
 import { CsrfInterceptor } from './security/csrf-interceptor';
 import { AdminGuard } from './services/admin.guard';
+import { ExpiredJwtInterceptor } from './security/expired-jwt-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,7 +23,12 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptorsFromDi()),
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptorService,
+      useClass: ExpiredJwtInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
       multi: true,
     },
     {
@@ -30,9 +36,10 @@ export const appConfig: ApplicationConfig = {
       useClass: CsrfInterceptor,
       multi: true,
     },
+    ExpiredJwtInterceptor,
     MessageService,
     ConfirmationService,
-    AuthInterceptorService,
+    AuthInterceptor,
     AdminGuard,
   ],
 };

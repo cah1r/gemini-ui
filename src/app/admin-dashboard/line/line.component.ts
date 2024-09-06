@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -18,10 +17,12 @@ import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
 import { NotificationService } from '../../services/notification-factory.service';
 import { API_URL } from '../../shared/constants';
-import { Stop } from '../../shared/model/bus-stop';
-import { Line } from '../../shared/model/line';
+import { Stop, StopWithLineDto } from '../../shared/model/bus-stop';
+import { Line, LineViewDto } from '../../shared/model/line';
+import { LineService } from '../services/line.service';
 import { NewLineModalComponent } from './new-line-modal/new-line-modal.component';
 import { NewStopModalComponent } from './new-stop-modal/new-stop-modal.component';
+import { StopService } from '../services/stop.service';
 
 @Component({
   selector: 'app-line',
@@ -46,12 +47,14 @@ import { NewStopModalComponent } from './new-stop-modal/new-stop-modal.component
 })
 export class LineComponent implements OnInit {
   newLineForm: FormGroup;
-  private _allLines: Line[] = [];
+  private _allLines: LineViewDto[] = [];
+  stopsCache: { [lineId: number]: StopWithLineDto[] } = {}
   expandedStops = {};
   tableSize: any = 'p-datatable-sm';
 
   constructor(
-    private http: HttpClient,
+    private lineService: LineService,
+    private stopService: StopService,
     private fb: FormBuilder,
     private notification: NotificationService,
     private confirmationService: ConfirmationService
@@ -65,7 +68,7 @@ export class LineComponent implements OnInit {
     this.fetchAllLines();
   }
 
-  get getAllLines(): Line[] {
+  get allLines(): Line[] {
     return this._allLines;
   }
 
@@ -73,24 +76,17 @@ export class LineComponent implements OnInit {
     return line.stops?.length;
   }
 
-  onRowReorder(event: any, stops: Stop[]) {
-    if (event.dragIndex !== event.dropIndex) {
-      const movedItem = stops.splice(event.dragIndex, 1)[0];
-      stops.splice(event.dropIndex, 0, movedItem);
-      stops.forEach((stop, index) => (stop.lineOrder = index + 1));
-      this.updateStopsOrder(stops);
-    }
+  onRowReorder(event: any, stops: StopWithLineDto[]) {
+    this.stopService.updateStopsOrder(event, stops)
   }
 
-  updateStopsOrder(stops: Stop[]) {
-    this.http.put(API_URL + '/admin/stops', stops).subscribe();
-  }
+
 
   onSubmit() {
     const line: Line = {
       description: this.newLineForm.get('lineDescription')?.value,
     };
-    this.http.post(API_URL + '/admin/lines', line).subscribe({
+    this.lineService.createLine(line).subscribe({
       next: () => this.notification.success(`Utowrzono nowa trasę ${line.description}`),
       error: () => this.notification.error('Wystapił bład podczas tworzenia nowej linii'),
     });
@@ -102,9 +98,17 @@ export class LineComponent implements OnInit {
   }
 
   fetchAllLines() {
-    this.http.get<Line[]>(API_URL + '/admin/lines').subscribe({
+    this.lineService.fetchAllLines().subscribe({
       next: (fetchedLines) => (this._allLines = fetchedLines),
     });
+  }
+
+  fetchLineStops(lineId: number) {
+    if (!this.stopsCache[lineId]) {
+      this.stopService.fetchLineStops(lineId).subscribe({
+        next: (fetchedStops) => (this.stopsCache[lineId] = fetchedStops),
+      });
+    }
   }
 
   formatCityInfo(town: string, details: string) {
@@ -121,14 +125,12 @@ export class LineComponent implements OnInit {
       rejectLabel: 'Nie',
       rejectButtonStyleClass: 'p-button-text',
       icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.deleteBusStop(id);
-      },
+      accept: () => this.deleteStop(id),
     });
   }
 
-  deleteBusStop(id: number) {
-    this.http.delete(API_URL + '/admin/stops/' + id).subscribe({
+  deleteStop(stopId: number) {
+    this.stopService.deleteStop(stopId).subscribe({
       next: () => {
         this.fetchAllLines(),
           this.notification.success("Poprawnie usunięto wskazany przystanek")

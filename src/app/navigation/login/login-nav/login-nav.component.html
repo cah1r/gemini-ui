@@ -9,17 +9,12 @@
 
   <div *ngIf="isLoggedIn()" class="lg:flex gap-3 items-center">
     <div *ngIf="isAdmin()">
-      <p-button
-        label="Admin"
-        severity="info"
-        outlined="true"
-        (click)="showAdminDash()"
-      />
+      <p-button size="small" label="Admin" severity="info" outlined="true" (click)="showAdminDash()" />
     </div>
 
-    <p-button label="Moje konto" outlined="true" />
+    <p-button label="Moje konto" outlined="true" size="small" />
 
-    <p-button label="Wyloguj" severity="danger" (click)="logout()" />
+    <p-button label="Wyloguj" severity="danger" (click)="logout()" size="small" />
   </div>
 </div>
 <p-toast></p-toast>
