@@ -3,18 +3,19 @@
     <p-button label="Zaloguj" outlined="true" (click)="loginModal.show()" />
     <app-login-modal #loginModal></app-login-modal>
 
-    <p-button label="Załóż konto" (click)="signupModal.show()" />
+    <p-button label="Załóż konto" (click)="signupModal.show()" (keyup.enter)="signupModal.show()" />
     <app-signup-modal #signupModal></app-signup-modal>
   </div>
 
   <div *ngIf="isLoggedIn()" class="lg:flex gap-3 items-center">
     <div *ngIf="isAdmin()">
-      <p-button size="small" label="Admin" severity="info" outlined="true" (click)="showAdminDash()" />
+      <p-button size="small" label="Admin" severity="info" outlined="true" (click)="showAdminDash()"
+        (keyup.enter)="showAdminDash()" />
     </div>
 
     <p-button label="Moje konto" outlined="true" size="small" />
 
-    <p-button label="Wyloguj" severity="danger" (click)="logout()" size="small" />
+    <p-button label="Wyloguj" severity="danger" size="small" (click)="logout()" (keyup.enter)="logout()" />
   </div>
 </div>
 <p-toast></p-toast>

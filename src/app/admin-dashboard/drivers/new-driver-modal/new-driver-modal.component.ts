@@ -1,6 +1,6 @@
 import { CommonModule, NgIf } from '@angular/common';
 import { Component, EventEmitter, Output } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DialogModule } from 'primeng/dialog';
@@ -38,18 +38,9 @@ export class NewDriverModalComponent {
     this.newDriverForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ ]*$/)]],
       lastName: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ ]*$/)]],
-      phoneNumber: ['', [Validators.required, this.phoneNumberValidator]],
+      phoneNumber: ['', [Validators.required]],
       isActive: [true],
     });
-  }
-
-  phoneNumberValidator(control: AbstractControl): ValidationErrors | null {
-    const value = control.value?.replace(/-/g, '');
-    if (!value) {
-      return null;
-    }
-    const valid = /^[0-9]{9}$/.test(value);
-    return valid ? null : { invalidPhoneNumber: true };
   }
 
   show() {

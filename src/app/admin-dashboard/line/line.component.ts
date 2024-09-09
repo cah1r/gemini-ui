@@ -16,13 +16,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PanelModule } from 'primeng/panel';
 import { TableModule } from 'primeng/table';
 import { NotificationService } from '../../services/notification-factory.service';
-import { API_URL } from '../../shared/constants';
-import { Stop, StopWithLineDto } from '../../shared/model/bus-stop';
+import { StopWithLineDto } from '../../shared/model/bus-stop';
 import { Line, LineViewDto } from '../../shared/model/line';
 import { LineService } from '../services/line.service';
+import { StopService } from '../services/stop.service';
 import { NewLineModalComponent } from './new-line-modal/new-line-modal.component';
 import { NewStopModalComponent } from './new-stop-modal/new-stop-modal.component';
-import { StopService } from '../services/stop.service';
 
 @Component({
   selector: 'app-line',
@@ -80,8 +79,6 @@ export class LineComponent implements OnInit {
     this.stopService.updateStopsOrder(event, stops)
   }
 
-
-
   onSubmit() {
     const line: Line = {
       description: this.newLineForm.get('lineDescription')?.value,
@@ -132,8 +129,8 @@ export class LineComponent implements OnInit {
   deleteStop(stopId: number) {
     this.stopService.deleteStop(stopId).subscribe({
       next: () => {
-        this.fetchAllLines(),
-          this.notification.success("Poprawnie usunięto wskazany przystanek")
+        this.fetchAllLines()
+        this.notification.success("Poprawnie usunięto wskazany przystanek")
       },
       error: () => this.notification.error("Wystąpił błąd podczas usuwania przystanku")
     });

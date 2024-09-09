@@ -16,7 +16,7 @@ export class CsrfInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const match = document.cookie.match(this.XSRF_REGEX);
+    const match = this.XSRF_REGEX.exec(document.cookie)
     const xsrfToken = match ? match[1] : '';
 
     if (req.url.startsWith(this.apiBaseUrl) && xsrfToken != '') {

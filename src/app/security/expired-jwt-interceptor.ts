@@ -1,7 +1,6 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { catchError, Observable, switchMap, throwError } from "rxjs";
-import { LoginService } from "../admin-dashboard/services/login.service";
+import { catchError, Observable } from "rxjs";
 import { AuthService } from "../services/auth.service";
 import { NotificationService } from "../services/notification-factory.service";
 

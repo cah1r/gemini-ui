@@ -21,12 +21,12 @@
     </ng-template>
     <ng-template pTemplate="header">
       <tr>
-        <th style="width: 30%" class="ps-9">Miasto wyjazdu</th>
-        <th style="width: 30%">Miasto przyjazdu</th>
-        <th style="width: 10%">Cena</th>
-        <th style="width: 10%">Bilet online</th>
-        <th style="width: 10%" class="text-center">Status</th>
-        <th style="width: 10%"></th>
+        <th scope="col" style="width: 30%" class="ps-9">Miasto wyjazdu</th>
+        <th scope="col" style="width: 30%">Miasto przyjazdu</th>
+        <th scope="col" style="width: 10%">Cena</th>
+        <th scope="col" style="width: 10%">Bilet online</th>
+        <th scope="col" style="width: 10%" class="text-center">Status</th>
+        <th scope="col" style="width: 10%"></th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-route>
@@ -49,16 +49,17 @@
         <td class="min-w-40">
           <div class="flex flex-row items-center">
             <p-button size="large" *ngIf="route.isActive" severity="contrast" icon="pi pi-minus-circle" [rounded]="true"
-              [text]="true" (click)="setActiveStatus(route.id, false)" />
+              [text]="true" (click)="setActiveStatus(route.id, false)"
+              (keyup.enter)="setActiveStatus(route.id, false)" />
             <p-button *ngIf="!route.isActive" severity="success" icon="pi pi-check-circle" [rounded]="true"
-              [text]="true" (click)="setActiveStatus(route.id, true)" />
+              [text]="true" (click)="setActiveStatus(route.id, true)" (keyup.enter)="setActiveStatus(route.id, true)" />
             <p-tag [value]="mapBooleanToStatus(route.isActive)" [severity]="getSeverity(route.isActive)"
               [rounded]="true" />
           </div>
         </td>
         <td class="flex justify-end">
           <p-button severity="danger" icon="pi pi-trash" [rounded]="true" [text]="true"
-            (click)="onDeleteRoute(route.id)" />
+            (click)="onDeleteRoute(route.id)" (keyup.enter)="onDeleteRoute(route.id)" />
         </td>
       </tr>
     </ng-template>

@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { CreateStop, Stop, StopDto } from './bus-stop';
+import { CreateStop, StopDto } from './bus-stop';
 
 export interface Route {
   id?: string;

@@ -1,4 +1,4 @@
-import { CreateStop, Stop } from './bus-stop';
+import { Stop } from './bus-stop';
 
 export interface Line {
   id?: number;

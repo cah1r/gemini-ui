@@ -4,15 +4,16 @@
       <div class="flex gap-4 items-center justify-between p-3">
         <p class="text-lg">Dostępne linie</p>
         <div class="flex gap-2 items-center">
-          <p-button label="Dodaj" size="small" [outlined]="true" (onClick)="newLineModal.show()" />
+          <p-button label="Dodaj" size="small" [outlined]="true" (onClick)="newLineModal.show()"
+            (keyup-enter)="newLineModal.show()" />
         </div>
       </div>
     </ng-template>
     <<ng-template pTemplate="header">
       <tr>
-        <th class="w-12"></th>
-        <th>Linia</th>
-        <th class="flex justify-end pe-9"># przystanków</th>
+        <th scope="col" class="w-12"></th>
+        <th scope="col">Linia</th>
+        <th scope="col" class="flex justify-end pe-9"># przystanków</th>
       </tr>
       </ng-template>
 
@@ -41,11 +42,12 @@
                 sortField="lineOrder" pReorderableRows (onRowReorder)="onRowReorder($event, stopsCache[line.id])">
                 <ng-template pTemplate="header">
         <tr>
-          <th style="width: 48px"></th>
-          <th style="width: 48px">Lp.</th>
-          <th>Nazwa przystanku</th>
-          <th style="width: 72px" class="py-2 m-0 h-auto">
-            <p-button label="Dodaj" size="small" [outlined]="true" (onClick)="newStopModal.openModal(line)" />
+          <th scope="col" style="width: 48px"></th>
+          <th scope="col" style="width: 48px">Lp.</th>
+          <th scope="col">Nazwa przystanku</th>
+          <th scope="cole" style="width: 72px" class="py-2 m-0 h-auto">
+            <p-button label="Dodaj" size="small" [outlined]="true" (onClick)="newStopModal.openModal(line)"
+              (keyup.enter)="newStopModal.openModal(line)" />
           </th>
         </tr>
         </ng-template>

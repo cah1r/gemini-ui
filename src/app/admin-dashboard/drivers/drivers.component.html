@@ -18,10 +18,10 @@
     </ng-template>
     <ng-template pTemplate="header">
       <tr>
-        <th style="width: 30%" class="ps-9">Imię</th>
-        <th style="width: 30%">Nazwisko</th>
-        <th style="width: 25%">Telefon</th>
-        <th style="width: 240px; padding-left: 4rem;">Status</th>
+        <th scope="col" style="width: 30%" class="ps-9">Imię</th>
+        <th scope="col" style="width: 30%">Nazwisko</th>
+        <th scope="col" style="width: 25%">Telefon</th>
+        <th scope="col" style="width: 240px; padding-left: 4rem;">Status</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-driver>
@@ -33,14 +33,16 @@
           <div class="flex flex-row items-center justify-between">
             <div class="flex flex-row items-center">
               <p-button size="large" *ngIf="driver.isActive" severity="contrast" icon="pi pi-minus-circle"
-                [rounded]="true" [text]="true" (click)="setActiveStatus(driver.id, false)" />
+                [rounded]="true" [text]="true" (click)="setActiveStatus(driver.id, false)"
+                (keyup.enter)="setActiveStatus(driver.id, false)" />
               <p-button *ngIf="!driver.isActive" severity="success" icon="pi pi-check-circle" [rounded]="true"
-                [text]="true" (click)="setActiveStatus(driver.id, true)" />
+                [text]="true" (click)="setActiveStatus(driver.id, true)"
+                (keyup.enter)="setActiveStatus(driver.id, true)" />
               <p-tag [value]="mapBooleanToStatus(driver.isActive)" [severity]="getSeverity(driver.isActive)"
                 [rounded]="true" />
             </div>
             <p-button severity="danger" icon="pi pi-trash" [rounded]="true" [text]="true" class="ml-6"
-              (click)="onDeleteDriver(driver.id)" />
+              (click)="onDeleteDriver(driver.id)" (keyup.enter)="onDeleteDriver(driver.id)" />
           </div>
         </td>
       </tr>

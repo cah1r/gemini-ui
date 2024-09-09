@@ -9,10 +9,6 @@
   @tailwind utilities;
 }
 
-/* @import "primeng/resources/themes/vala-orange/theme.css" layer(primeng);
-@import "primeng/resources/primeng.css" layer(primeng);
-@import "primeicons/primeicons.css" layer(primeng); */
-
 html {
   font-size: 90%;
 }
@@ -23,23 +19,6 @@ body,
   font-optical-sizing: auto;
   font-style: normal;
 }
-
-/*.p-button {*/
-/*  border-radius: 8px;*/
-/*}*/
-
-/*.p-dialog,*/
-/*.p-inputtext {*/
-/*  border-radius: 10px;*/
-/*}*/
-
-/*.p-dialog-content {*/
-/*  border-radius: 0 0 10px 10px;*/
-/*}*/
-
-/*.p-dialog-header {*/
-/*  border-radius: 10px 10px 0 0;*/
-/*}*/
 
 .gsi-material-button {
   -moz-user-select: none;

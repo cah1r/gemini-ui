@@ -1,4 +1,5 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { NgIf } from '@angular/common';
+import { Component, EventEmitter, Output } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -18,7 +19,6 @@ import { Line } from '../../../shared/model/line';
 import { LineService } from '../../services/line.service';
 import { RouteService } from '../../services/route.service';
 import { StopService } from '../../services/stop.service';
-import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-new-route-modal',
@@ -39,7 +39,6 @@ import { NgIf } from '@angular/common';
 })
 export class NewRouteModalComponent {
   private _availableLines: Line[] = [];
-  private _allBusStops: StopWithLineDto[] = [];
   private _matchingBusStops: StopWithLineDto[] = [];
 
   @Output() routeCreated = new EventEmitter<void>();
@@ -69,9 +68,11 @@ export class NewRouteModalComponent {
         if (selectedLine) {
           this.newRouteForm.get('initialStop')?.enable();
           this.newRouteForm.get('lastStop')?.enable();
-          this._matchingBusStops = this._allBusStops
-            .filter((stop) => stop.lineId === selectedLine.id)
-            .sort((a, b) => a.lineOrder - b.lineOrder);
+          this.stopService.fetchLineStops(selectedLine.id!).subscribe({
+            next: (fetchedStops) => this._matchingBusStops = fetchedStops.sort((a, b) => a.lineOrder - b.lineOrder),
+            error: () =>
+              this.notification.error('Wystąpił błąd podczas pobierania przystanków'),
+          })
         } else {
           this.newRouteForm.get('initialValue')?.disable();
           this.newRouteForm.get('lastStop')?.disable();
@@ -82,25 +83,18 @@ export class NewRouteModalComponent {
   fetchAllLines() {
     this.lineService.fetchAllLines().subscribe({
       next: (fetchedLines) => (this._availableLines = fetchedLines),
-      error: () => this.notification.error('Wystąpił błąd podczas pobierania linii')
-    });
-  }
-
-  fetchAllBusStops() {
-    this.stopService.fetchAllStops().subscribe({
-      next: (fetchedData) => (this._allBusStops = fetchedData),
-      error: () => this.notification.error('Wystąpił błąd podczas pobierania przystanków')
+      error: () =>
+        this.notification.error('Wystąpił błąd podczas pobierania linii'),
     });
   }
 
   show() {
     this.display = true;
     this.fetchAllLines();
-    this.fetchAllBusStops();
   }
 
   hide() {
-    this.display = false
+    this.display = false;
   }
 
   onSubmit() {
@@ -116,9 +110,9 @@ export class NewRouteModalComponent {
     };
     this.routeService.createRoute(createRouteDto).subscribe({
       next: () => {
-        this.resetForm()
-        this.display = false
-        this.routeCreated.emit()
+        this.resetForm();
+        this.display = false;
+        this.routeCreated.emit();
       },
       error: (err) => console.log("Couldn't create route", err),
     });
@@ -132,7 +126,7 @@ export class NewRouteModalComponent {
   }
 
   onCancel() {
-    this.resetForm()
+    this.resetForm();
     this.display = false;
   }
 

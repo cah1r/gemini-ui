@@ -8,7 +8,6 @@ import { AuthService } from '../../../services/auth.service';
 import { MODAL_LIFE } from '../../../shared/constants';
 import { LoginModalComponent } from '../login-modal/login-modal.component';
 import { SignupModalComponent } from '../signup-modal/signup-modal.component';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-login-nav',

@@ -1,17 +1,17 @@
+import { NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { NotificationService } from '../../services/notification-factory.service';
 import { Driver } from '../../shared/model/driver.model';
 import { DriverService } from '../services/driver.service';
-import { NewDriverModalComponent } from "./new-driver-modal/new-driver-modal.component";
-import { InputTextModule } from 'primeng/inputtext';
-import { ConfirmationService } from 'primeng/api';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { NgIf } from '@angular/common';
+import { NewDriverModalComponent } from './new-driver-modal/new-driver-modal.component';
 
 @Component({
   selector: 'app-drivers',
@@ -28,10 +28,9 @@ import { NgIf } from '@angular/common';
     NgIf,
   ],
   templateUrl: './drivers.component.html',
-  styleUrl: './drivers.component.css'
+  styleUrl: './drivers.component.css',
 })
 export class DriversComponent implements OnInit {
-
   private _allDrivers: Driver[] = [];
   loading: boolean = true;
   constructor(
@@ -46,10 +45,16 @@ export class DriversComponent implements OnInit {
 
   fetchDrivers() {
     this.driverService.getAllDrivers().subscribe({
-      next: response => {
-        this._allDrivers = response.sort((a, b) => a.lastName.localeCompare(b.lastName));
+      next: (response: Driver[]) => {
+        this._allDrivers = response
+        this._allDrivers.sort((a, b) =>
+          a.lastName.localeCompare(b.lastName)
+        );
       },
-      error: () => this.notification.error('Nie udało się pobrać listy kierowców z bazy danych')
+      error: () =>
+        this.notification.error(
+          'Nie udało się pobrać listy kierowców z bazy danych'
+        ),
     });
   }
 
@@ -60,12 +65,15 @@ export class DriversComponent implements OnInit {
   setActiveStatus(id: string, isActive: boolean) {
     this.driverService.setActiveStatus(id, isActive).subscribe({
       next: () => {
-        const driver = this._allDrivers.find(driver => driver.id === id);
+        const driver = this._allDrivers.find((driver) => driver.id === id);
         if (driver) {
           driver.isActive = isActive;
         }
       },
-      error: () => this.notification.error('Nie udało się zmienić statusu aktywności kierowcy')
+      error: () =>
+        this.notification.error(
+          'Nie udało się zmienić statusu aktywności kierowcy'
+        ),
     });
   }
 
@@ -81,9 +89,12 @@ export class DriversComponent implements OnInit {
       accept: () => {
         this.driverService.deleteDriver(id).subscribe({
           next: () => this.fetchDrivers(),
-          error: () => this.notification.error('Nie udało się usunąć kierowcy z bazy danych')
+          error: () =>
+            this.notification.error(
+              'Nie udało się usunąć kierowcy z bazy danych'
+            ),
         });
-      }
+      },
     });
   }
 

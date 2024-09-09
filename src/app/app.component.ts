@@ -29,7 +29,7 @@ import { API_URL } from './shared/constants';
 export class AppComponent implements OnInit {
   title = 'gemini-ui';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
     this.http
@@ -38,10 +38,6 @@ export class AppComponent implements OnInit {
   }
 
   getRouteAnimationData(outlet: any) {
-    return (
-      outlet &&
-      outlet.activatedRouteData &&
-      outlet.activatedRouteData['animation']
-    );
+    return outlet?.activatedRouteData?.['animation']
   }
 }

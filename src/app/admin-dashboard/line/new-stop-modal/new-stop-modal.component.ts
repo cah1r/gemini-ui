@@ -55,7 +55,7 @@ export class NewStopModalComponent {
   }
 
   onSubmit() {
-    if (this.line && this.line.stops?.length) {
+    if (this.line?.stops?.length) {
       const stop: CreateStop = {
         town: this.newStopForm.get('town')?.value,
         details: this.newStopForm.get('description')?.value,
