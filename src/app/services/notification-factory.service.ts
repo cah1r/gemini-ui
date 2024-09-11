@@ -15,6 +15,7 @@ export class NotificationService {
       summary: 'Sukces',
       detail: details,
       life: MODAL_LIFE,
+      key: 'br'
     });
   }
 
@@ -24,6 +25,7 @@ export class NotificationService {
       summary: 'Błąd',
       detail: details,
       life: MODAL_LIFE,
+      key: 'br'
     });
   }
 }

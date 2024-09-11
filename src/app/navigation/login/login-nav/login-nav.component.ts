@@ -8,17 +8,18 @@ import { AuthService } from '../../../services/auth.service';
 import { MODAL_LIFE } from '../../../shared/constants';
 import { LoginModalComponent } from '../login-modal/login-modal.component';
 import { SignupModalComponent } from '../signup-modal/signup-modal.component';
+import { NotificationService } from '../../../services/notification-factory.service';
 
 @Component({
   selector: 'app-login-nav',
   standalone: true,
   imports: [
+    Button,
+    LoginModalComponent,
+    NgClass,
     NgIf,
     SignupModalComponent,
     ToastModule,
-    LoginModalComponent,
-    Button,
-    NgClass,
   ],
   templateUrl: './login-nav.component.html',
   styleUrl: './login-nav.component.css',
@@ -28,7 +29,7 @@ export class LoginNavComponent {
 
   constructor(
     private readonly authService: AuthService,
-    private messageService: MessageService,
+    private notification: NotificationService,
     private router: Router
   ) {
     this.isLoggedIn();
@@ -40,7 +41,7 @@ export class LoginNavComponent {
 
   logout() {
     this.authService.logout();
-    this.logoutNotification();
+    this.notification.success('Zostałeś poprawnie wylogowany');
   }
 
   isAdmin() {
@@ -51,12 +52,4 @@ export class LoginNavComponent {
     this.router.navigate(['admin']);
   }
 
-  private logoutNotification() {
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Sukces',
-      detail: 'Zostałeś poprawnie wylogowany',
-      life: MODAL_LIFE,
-    });
-  }
 }

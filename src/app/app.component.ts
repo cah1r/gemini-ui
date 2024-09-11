@@ -9,6 +9,7 @@ import { TicketBundleComponent } from './customer/ticket-bundle/ticket-bundle.co
 import { LoginNavComponent } from './navigation/login/login-nav/login-nav.component';
 import { NavbarComponent } from './navigation/navbar/navbar.component';
 import { API_URL } from './shared/constants';
+import { PrimeNGConfig } from 'primeng/api';
 
 @Component({
   selector: 'app-root',
@@ -29,15 +30,12 @@ import { API_URL } from './shared/constants';
 export class AppComponent implements OnInit {
   title = 'gemini-ui';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private primengConfig: PrimeNGConfig) { }
 
   ngOnInit(): void {
+    this.primengConfig.ripple = true
     this.http
       .post(`${API_URL}/auth/csrf`, null, { withCredentials: true })
       .subscribe();
-  }
-
-  getRouteAnimationData(outlet: any) {
-    return outlet?.activatedRouteData?.['animation']
   }
 }

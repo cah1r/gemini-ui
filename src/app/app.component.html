@@ -1,7 +1,4 @@
 <app-navbar></app-navbar>
-<div
-  class="flex-1 router-container"
-  [@fadeAnimation]="getRouteAnimationData(outlet)"
->
-  <router-outlet #outlet="outlet"></router-outlet>
+<div class="flex-1 router-container">
+  <router-outlet></router-outlet>
 </div>

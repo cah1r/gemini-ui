@@ -1,0 +1,53 @@
+<p-dialog header="Dodaj pojazd" [modal]="true" [(visible)]="display" [closable]="true" [style]="{ width: '25rem' }"
+  #modalContainer>
+  <div class="flex flex-col gap-7 p-fluid">
+    <form [formGroup]="newCarForm" (ngSubmit)="onSubmit()">
+      <div class="flex flex-col gap-5">
+        <div class="flex flex-col">
+          <label for="registration">Numer rejestracyjny</label>
+          <input pInputText formControlName="registration" type="text"
+            [ngClass]="{'border-red-300': isFieldInvalid('registration')}" />
+          <div class="h-[0.5rem]">
+            <small *ngIf="isFieldInvalid('registration')" class="p-error">
+              <span *ngIf="newCarForm.get('registration')?.hasError('required')">Numer rejestracyjny jest
+                wymagany.</span>
+              <span *ngIf="newCarForm.get('registration')?.hasError('minlength')">Minimum 7 znaków.</span>
+            </small>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <div class="flex flex-col">
+            <label for="capacity">Pojemność</label>
+            <p-inputNumber formControlName="capacity" [min]="1" [max]="200"
+              [ngClass]="{'border-red-300': isFieldInvalid('capacity')}" />
+            <div class="h-[0.5rem]">
+              <small *ngIf="isFieldInvalid('capacity')" class="p-error">
+                <span *ngIf="newCarForm.get('capacity')?.hasError('required')">Wymagane.</span>
+                <span *ngIf="newCarForm.get('capacity')?.hasError('min')">Minimalna pojemność to 1.</span>
+              </small>
+            </div>
+          </div>
+
+          <div class="flex flex-col">
+            <label for="idNumber">Id</label>
+            <p-inputNumber [min]="0" formControlName="idNumber" />
+          </div>
+        </div>
+
+        <div class="flex flex-col">
+          <label for="name">Nazwa</label>
+          <input pInputText formControlName="name" type="text" />
+        </div>
+
+        <div class="flex justify-end gap-2 mt-2">
+          <p-button label="Anuluj" icon="pi pi-times" severity="secondary" size="small" [outlined]="true"
+            (onClick)="onCancel()" />
+          <p-button label="Dodaj" icon="pi pi-check" size="small" [disabled]="newCarForm.invalid"
+            (onClick)="onSubmit()" />
+        </div>
+      </div>
+    </form>
+  </div>
+</p-dialog>
+<p-toast position="bottom-right" key="br"></p-toast>
