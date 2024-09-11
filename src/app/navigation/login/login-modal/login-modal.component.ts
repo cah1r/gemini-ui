@@ -16,6 +16,7 @@ import { AuthGoogleService } from '../../../services/auth-google.service';
 import { AuthService } from '../../../services/auth.service';
 import { NotificationService } from '../../../services/notification-factory.service';
 import { LoginUser, User } from '../../../shared/model/user.model';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-login-modal',
@@ -27,6 +28,7 @@ import { LoginUser, User } from '../../../shared/model/user.model';
     NgIf,
     PaginatorModule,
     ReactiveFormsModule,
+    ToastModule
   ],
   templateUrl: './login-modal.component.html',
   styleUrl: './login-modal.component.css',
@@ -83,7 +85,7 @@ export class LoginModalComponent implements OnInit {
             this.loginService.closeModal()
             this.loginForm.reset()
             this.loginService.setLoginSuccess(token)
-            // this.notification.success(`Zalogowano jako ${this.user?.email}`)
+            this.notification.success(`Zalogowano jako ${this.user?.email}`)
           } else {
             this.notification.error(`Błąd przetwarzania tokenu bezpieczeństwa. Spróbuj zalogować się ponownie`)
           }

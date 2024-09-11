@@ -1,0 +1,60 @@
+<div class="shadow-xl w-full">
+  <p-table #dt dataKey="id" [value]="allCars" [tableStyle]="{ 'min-width': '50rem' }"
+    styleClass="p-datatable-sm animated-table" [globalFilterFields]="['name', 'registration', 'idNumber']"
+    [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 15, 20]">
+    <ng-template pTemplate="caption">
+      <div class="flex justify-between items-center p-3">
+        <p class="text-lg">Pojzady</p>
+        <div class="flex">
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+              placeholder="Szukaj słowa kluczowe" />
+          </p-iconField>
+        </div>
+        <p-button label="Dodaj" size="small" [outlined]="true" (onClick)="newCarModal.show()" />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th scope="col" pSortableColumn="idNumber" style="width: 11rem" class="ps-9">
+          Nr pojazdu <p-sortIcon field="idNumber" />
+        </th>
+        <th scope="col" pSortableColumn="registration" style="width: 20rem">
+          Nr. rejestracyjny <p-sortIcon field="registration" />
+        </th>
+        <th scope="col" pSortableColumn="capacity" style="width: 20rem;">
+          Pojemność <p-sortIcon field="capacity" />
+        </th>
+        <th scope="col" pSortableColumn="name">
+          Nazwa <p-sortIcon field="name" />
+        </th>
+        <th scope="col"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-car>
+      <tr>
+        <td class="p-0 h-auto text-center">{{ car.idNumber }}</td>
+        <td class="p-0 h-auto ps-2">{{ car.registration }}</td>
+        <td class="p-0 h-auto ps-2">{{ car.capacity }}</td>
+        <td class="p-0 h-auto ps-2">{{ car.name }}</td>
+        <td class="flex p-0 pe-4 justify-end">
+          <p-button severity="danger" icon="pi pi-trash" [rounded]="true" [text]="true" class="ml-6"
+            (click)="onDeleteCar(car.id)" onkeyup="onDeleteCar(car.id)" />
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="5">Nie znaleziono samochodów w bazie danych.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <app-new-car-modal #newCarModal (carCreated)="onCarCreated($event)"></app-new-car-modal>
+  <p-confirmDialog></p-confirmDialog>
+  <p-toast position="bottom-right" key="br"></p-toast>
+</div>

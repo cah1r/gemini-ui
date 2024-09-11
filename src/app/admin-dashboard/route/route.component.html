@@ -35,18 +35,13 @@
           {{ formatCityInfo(route.originStop.town, route.originStop.details) }}
         </td>
         <td class="p-0 h-auto">
-          {{
-          formatCityInfo(
-          route.destinationStop.town,
-          route.destinationStop.details
-          )
-          }}
+          {{ formatCityInfo(route.destinationStop.town, route.destinationStop.details) }}
         </td>
         <td class="p-0 h-auto">{{ route.price | number : "1.2-2" }} zł</td>
-        <td>
+        <td class="p-0">
           <p-inputSwitch [(ngModel)]="route.isTicketAvailable" (onChange)="setTicketAvailability($event, route)" />
         </td>
-        <td class="min-w-40">
+        <td class="min-w-40 p-0">
           <div class="flex flex-row items-center">
             <p-button size="large" *ngIf="route.isActive" severity="contrast" icon="pi pi-minus-circle" [rounded]="true"
               [text]="true" (click)="setActiveStatus(route.id, false)"
@@ -57,7 +52,7 @@
               [rounded]="true" />
           </div>
         </td>
-        <td class="flex justify-end">
+        <td class="flex justify-end p-0.5">
           <p-button severity="danger" icon="pi pi-trash" [rounded]="true" [text]="true"
             (click)="onDeleteRoute(route.id)" (keyup.enter)="onDeleteRoute(route.id)" />
         </td>

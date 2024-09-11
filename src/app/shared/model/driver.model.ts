@@ -1,5 +1,5 @@
 export interface Driver {
-  id: string
+  id?: string
   firstName: string
   lastName: string
   phoneNumber: number

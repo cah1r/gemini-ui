@@ -19,8 +19,8 @@ export class DriverService {
     return this.http.delete<void>(API_URL + '/admin/drivers/' + id);
   }
 
-  createDriver(driver: DriverDto): Observable<void> {
-    return this.http.post<void>(API_URL + '/admin/drivers', driver);
+  createDriver(driver: DriverDto) {
+    return this.http.post<string>(API_URL + '/admin/drivers', driver);
   }
 
   setActiveStatus(id: string, isActive: boolean): Observable<void> {

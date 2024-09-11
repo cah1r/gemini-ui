@@ -6,6 +6,7 @@ import { RouteComponent } from './admin-dashboard/route/route.component';
 import { MainPageComponent } from './pages/main-page/main-page.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { AdminGuard } from './services/admin.guard';
+import { CarsComponent } from './admin-dashboard/cars/cars.component';
 
 export const routes: Routes = [
   {
@@ -19,13 +20,14 @@ export const routes: Routes = [
     canActivate: [AdminGuard],
     children: [
       { path: '', redirectTo: 'routes', pathMatch: 'full' },
-      { path: 'routes', component: RouteComponent },
-      { path: 'lines', component: LineComponent },
-      { path: 'drivers', component: DriversComponent },
+      { path: 'routes', component: RouteComponent, data: { animation: 'RoutePage' } },
+      { path: 'lines', component: LineComponent, data: { animation: 'LinePage' } },
+      { path: 'drivers', component: DriversComponent, data: { animation: 'DriversPage' } },
+      { path: 'cars', component: CarsComponent, data: { animation: 'CarsPage' } },
     ],
     data: { animation: 'AdminDash' },
   },
-  { path: 'not-found', component: NotFoundComponent },
+  { path: 'not-found', component: NotFoundComponent, data: { animation: 'NotFoundPage' } },
   { path: '', redirectTo: 'index', pathMatch: 'full' },
   { path: '**', redirectTo: 'not-found', pathMatch: 'full' },
 ];

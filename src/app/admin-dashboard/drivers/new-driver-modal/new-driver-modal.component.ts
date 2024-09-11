@@ -7,23 +7,25 @@ import { DialogModule } from 'primeng/dialog';
 import { InputMaskModule } from 'primeng/inputmask';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
+import { ToastModule } from 'primeng/toast';
 import { NotificationService } from '../../../services/notification-factory.service';
-import { DriverDto } from '../../../shared/model/driver.model';
+import { Driver } from '../../../shared/model/driver.model';
 import { DriverService } from '../../services/driver.service';
 
 @Component({
   selector: 'app-new-driver-modal',
   standalone: true,
   imports: [
-    DialogModule,
-    ReactiveFormsModule,
     ButtonModule,
-    NgIf,
+    CheckboxModule,
     CommonModule,
-    InputTextModule,
-    InputNumberModule,
+    DialogModule,
     InputMaskModule,
-    CheckboxModule
+    InputNumberModule,
+    InputTextModule,
+    NgIf,
+    ReactiveFormsModule,
+    ToastModule,
   ],
   templateUrl: './new-driver-modal.component.html',
   styleUrl: './new-driver-modal.component.css'
@@ -32,7 +34,7 @@ export class NewDriverModalComponent {
   display = false;
   newDriverForm: FormGroup;
 
-  @Output() driverCreated = new EventEmitter<void>();
+  @Output() driverCreated = new EventEmitter<Driver>();
 
   constructor(private fb: FormBuilder, private driverService: DriverService, private notification: NotificationService) {
     this.newDriverForm = this.fb.group({
@@ -48,7 +50,7 @@ export class NewDriverModalComponent {
   }
 
   onSubmit() {
-    let driver: DriverDto = {
+    let driver: Driver = {
       firstName: this.newDriverForm.value.firstName,
       lastName: this.newDriverForm.value.lastName,
       phoneNumber: this.newDriverForm.value.phoneNumber,
@@ -56,11 +58,13 @@ export class NewDriverModalComponent {
     }
 
     this.driverService.createDriver(driver).subscribe({
-      next: () => {
-        this.driverCreated.emit();
+      next: (receivedId: string) => {
+        driver.id = receivedId
+        this.driverCreated.emit(driver);
         this.onCancel();
+        this.notification.success(`Kierowca ${driver.firstName} ${driver.lastName} został utowrzony`)
       },
-      error: () => this.notification.error('Nie udało się dodać kierowcy do bazy danych. Spróbuj ponownie.')
+      error: (e) => this.notification.error('Nie udało się dodać kierowcy do bazy danych. Spróbuj ponownie.')
     })
 
   }

@@ -1,6 +1,7 @@
 <div class="shadow-xl w-full">
-  <p-table #dt dataKey="id" [value]="allDrivers" [tableStyle]="{ 'min-width': '50rem' }" styleClass="p-datatable-sm"
-    [globalFilterFields]="['firstName', 'lastName', 'phoneNumber']">
+  <p-table #dt dataKey="id" [value]="allDrivers" sortField="lastName" [tableStyle]="{ 'min-width': '50rem' }"
+    styleClass="p-datatable-sm" [globalFilterFields]="['firstName', 'lastName', 'phoneNumber']" [paginator]="true"
+    [rows]="10" [rowsPerPageOptions]="[5, 10, 15, 20]">
     <ng-template pTemplate="caption">
       <div class="flex justify-between items-center p-3">
         <p class="text-lg">Kierowcy</p>
@@ -21,7 +22,12 @@
         <th scope="col" style="width: 30%" class="ps-9">Imię</th>
         <th scope="col" style="width: 30%">Nazwisko</th>
         <th scope="col" style="width: 25%">Telefon</th>
-        <th scope="col" style="width: 240px; padding-left: 4rem;">Status</th>
+        <th scope="col" style="width: 240px; padding-left: 1.3rem">
+          <div class="flex gap-6 items-end">
+            <p-columnFilter type="boolean" field="isActive" [showClearButton]="false" class="mb-0.5" />
+            <span>Status</span>
+          </div>
+        </th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-driver>
@@ -29,7 +35,7 @@
         <td class="p-0 ps-9 h-auto">{{ driver.firstName }}</td>
         <td class="p-0 h-auto">{{ driver.lastName }}</td>
         <td class="p-0 h-auto">{{ driver.phoneNumber }}</td>
-        <td class="min-w-60">
+        <td class="min-w-60 p-0.5">
           <div class="flex flex-row items-center justify-between">
             <div class="flex flex-row items-center">
               <p-button size="large" *ngIf="driver.isActive" severity="contrast" icon="pi pi-minus-circle"
@@ -55,6 +61,6 @@
     </ng-template>
   </p-table>
 
-  <app-new-driver-modal #newDriverModal (driverCreated)="onDriverCreated()"></app-new-driver-modal>
+  <app-new-driver-modal #newDriverModal (driverCreated)="onDriverCreated($event)"></app-new-driver-modal>
   <p-confirmDialog></p-confirmDialog>
 </div>

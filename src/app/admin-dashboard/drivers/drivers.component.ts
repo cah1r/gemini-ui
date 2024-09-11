@@ -1,6 +1,5 @@
 import { NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -8,6 +7,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+import { ConfirmationFactoryService } from '../../services/confirmation-factory.service';
 import { NotificationService } from '../../services/notification-factory.service';
 import { Driver } from '../../shared/model/driver.model';
 import { DriverService } from '../services/driver.service';
@@ -36,7 +36,7 @@ export class DriversComponent implements OnInit {
   constructor(
     private driverService: DriverService,
     private notification: NotificationService,
-    private confirmationService: ConfirmationService
+    private confirmation: ConfirmationFactoryService
   ) { }
 
   ngOnInit(): void {
@@ -45,12 +45,7 @@ export class DriversComponent implements OnInit {
 
   fetchDrivers() {
     this.driverService.getAllDrivers().subscribe({
-      next: (response: Driver[]) => {
-        this._allDrivers = response
-        this._allDrivers.sort((a, b) =>
-          a.lastName.localeCompare(b.lastName)
-        );
-      },
+      next: (response: Driver[]) => this._allDrivers = response,
       error: () =>
         this.notification.error(
           'Nie udało się pobrać listy kierowców z bazy danych'
@@ -78,23 +73,18 @@ export class DriversComponent implements OnInit {
   }
 
   onDeleteDriver(id: string) {
-    this.confirmationService.confirm({
-      header: 'Usuwanie',
-      acceptLabel: 'Tak',
-      acceptButtonStyleClass: 'p-button-danger p-button-text',
-      rejectLabel: 'Nie',
-      rejectButtonStyleClass: 'p-button-text',
-      icon: 'pi pi-exclamation-triangle',
-      message: 'Czy na pewno chcesz usunąć kierowcę?',
-      accept: () => {
-        this.driverService.deleteDriver(id).subscribe({
-          next: () => this.fetchDrivers(),
-          error: () =>
-            this.notification.error(
-              'Nie udało się usunąć kierowcy z bazy danych'
-            ),
-        });
-      },
+    this.confirmation.showDeleteDialog(
+      'Czy na pewno chcesz usunąć kierowcę?',
+      () => this.deleteDriver(id)
+    )
+  }
+
+  private deleteDriver(id: string) {
+    this.driverService.deleteDriver(id).subscribe({
+      next: () => this.fetchDrivers(),
+      error: () => this.notification.error(
+        'Nie udało się usunąć kierowcy z bazy danych'
+      ),
     });
   }
 
@@ -106,7 +96,7 @@ export class DriversComponent implements OnInit {
     return isActive ? 'success' : 'danger';
   }
 
-  onDriverCreated() {
-    this.fetchDrivers();
+  onDriverCreated(driver: Driver) {
+    this._allDrivers.push(driver)
   }
 }
