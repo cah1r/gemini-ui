@@ -32,7 +32,11 @@ export class AdminDashboardComponent implements OnInit {
         icon: 'pi pi-arrows-h',
         command: () => this.router.navigate(['/admin/lines']),
       },
-      { label: 'Pakiety', icon: 'pi pi-receipt' },
+      {
+        label: 'Pakiety',
+        icon: 'pi pi-receipt',
+        command: () => this.router.navigate(['/admin/bundles'])
+      },
       { label: 'Rozkład jazdy', icon: 'pi pi-calendar' },
       {
         label: 'Kierowcy',

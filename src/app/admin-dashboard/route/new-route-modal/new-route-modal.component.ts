@@ -77,7 +77,7 @@ export class NewRouteModalComponent {
           this.newRouteForm.get('initialValue')?.disable();
           this.newRouteForm.get('lastStop')?.disable();
         }
-      });
+      }); 
   }
 
   fetchAllLines() {

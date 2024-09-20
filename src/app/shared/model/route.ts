@@ -26,3 +26,11 @@ export interface CreateRouteDto {
   isActive: boolean;
   isTicketAvailable: boolean;
 }
+
+export interface RouteViewDto {
+  id: string
+  stopATown: string
+  stopADetails: string
+  stopBTown: string
+  stopBDetails: string
+}

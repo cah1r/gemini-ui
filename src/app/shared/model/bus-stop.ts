@@ -21,6 +21,7 @@ export interface StopWithLineDto {
   details: string;
   lineOrder: number;
   lineId: number;
+  displayName: string;
 }
 
 export interface StopDto {
