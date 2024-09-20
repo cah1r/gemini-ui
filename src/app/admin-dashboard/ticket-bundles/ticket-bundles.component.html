@@ -1,0 +1,144 @@
+<div class="shadow-xl w-full">
+  <p-table
+    #dt
+    dataKey="id"
+    [value]="allTicketBundles"
+    sortField="routeName"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    styleClass="p-datatable-sm"
+    [globalFilterFields]="['routeName', 'ticketCount', 'price']"
+    [paginator]="true"
+    [rows]="10"
+    [rowsPerPageOptions]="[5, 10, 15, 20]"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex justify-between items-center p-3">
+        <p class="text-lg">Pakiety biletów</p>
+        <div class="flex">
+          <p-iconField iconPosition="left" class="ml-auto">
+            <p-inputIcon>
+              <i class="pi pi-search"></i>
+            </p-inputIcon>
+            <input
+              pInputText
+              type="text"
+              (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+              placeholder="Szukaj słowa kluczowe"
+            />
+          </p-iconField>
+        </div>
+        <p-button
+          label="Dodaj"
+          size="small"
+          [outlined]="true"
+          (onClick)="newTicketBundleModal.show()"
+        />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th scope="col" style="width: 35%" class="ps-9">Trasa</th>
+        <th scope="col" style="width: 20%">Ilość biletów</th>
+        <th scope="col" style="width: 20%">Cena</th>
+        <th scope="col" style="width: 240px; padding-left: 1.3rem">
+          <div class="flex gap-6 items-end">
+            <p-columnFilter
+              type="boolean"
+              field="isActive"
+              [showClearButton]="false"
+              class="mb-0.5"
+            />
+            <span>Status</span>
+          </div>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-ticketsBundle>
+      <tr>
+        <td class="py-1 ps-9 h-auto">
+          <ng-container
+            *ngFor="let route of ticketsBundle.routesPreview; let first = first"
+          >
+            <div
+              class="grid grid-cols-3 gap-1 items-center"
+              [ngClass]="{ 'mt-2': !first }"
+              style="grid-template-columns: 0.4fr 0.2fr 0.4fr"
+            >
+              <div class="flex flex-col">
+                <div class="mt-">{{ route.stopATown }}</div>
+                <span class="text-xs text-gray-500">{{
+                  route.stopADetails
+                }}</span>
+              </div>
+
+              <span class="pi pi-arrow-right"></span>
+
+              <div class="flex flex-col">
+                <div>{{ route.stopBTown }}</div>
+                <span class="text-xs text-gray-500">{{
+                  route.stopBDetails
+                }}</span>
+              </div>
+            </div>
+          </ng-container>
+        </td>
+        <td class="p-0 h-auto">{{ ticketsBundle.ticketsQuantity }}</td>
+        <td class="p-0 h-auto">
+          {{ ticketsBundle.price | number : "1.2-2" }} zł
+        </td>
+        <td class="min-w-60 p-0.5">
+          <div class="flex flex-row items-center justify-between">
+            <div class="flex flex-row items-center">
+              <p-button
+                size="large"
+                *ngIf="ticketsBundle.isActive"
+                severity="contrast"
+                icon="pi pi-minus-circle"
+                [rounded]="true"
+                [text]="true"
+                (click)="setActiveStatus(ticketsBundle.id, false)"
+                (keyup.enter)="setActiveStatus(ticketsBundle.id, false)"
+              />
+              <p-button
+                *ngIf="!ticketsBundle.isActive"
+                severity="success"
+                icon="pi pi-check-circle"
+                [rounded]="true"
+                [text]="true"
+                (click)="setActiveStatus(ticketsBundle.id, true)"
+                (keyup.enter)="setActiveStatus(ticketsBundle.id, true)"
+              />
+              <p-tag
+                [value]="mapBooleanToStatus(ticketsBundle.isActive)"
+                [severity]="getSeverity(ticketsBundle.isActive)"
+                [rounded]="true"
+              />
+            </div>
+            <p-button
+              severity="danger"
+              icon="pi pi-trash"
+              [rounded]="true"
+              [text]="true"
+              class="ml-6"
+              (click)="onDeleteBundle(ticketsBundle.id)"
+              (keyup.enter)="onDeleteBundle(ticketsBundle.id)"
+            />
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="4">Nie znaleziono pakietów biletów w bazie danych.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <app-new-ticket-bundle-modal
+    #newTicketBundleModal
+    (bundleCreated)="onBundleCreated($event)"
+  >
+  </app-new-ticket-bundle-modal>
+  <p-confirmDialog></p-confirmDialog>
+</div>

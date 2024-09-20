@@ -1,13 +1,28 @@
-<p-dialog header="Nowa trasa" [modal]="true" [(visible)]="display" [closable]="true"
-  [style]="{ minWidth: '24rem', maxWidth: '36rem' }" #modalContainer>
+<p-dialog
+  header="Nowa trasa"
+  [modal]="true"
+  [(visible)]="display"
+  [closable]="true"
+  [style]="{ minWidth: '24rem', maxWidth: '36rem' }"
+  #modalContainer
+>
   <div *ngIf="display" class="flex flex-col gap-4 p-fluid">
     <form [formGroup]="newRouteForm" (ngSubmit)="onSubmit()">
       <div class="flex flex-col gap-6">
-        <p-dropdown [options]="availableLines" formControlName="selectedLine" placeholder="Wybierz linię"
-          optionLabel="description" />
+        <p-dropdown
+          [options]="availableLines"
+          formControlName="selectedLine"
+          placeholder="Wybierz linię"
+          optionLabel="description"
+        />
 
-        <p-dropdown [options]="matchingBusStops" formControlName="initialStop" placeholder="Przystanek początkowy"
-          optionLabel="town" class="w-full">
+        <p-dropdown
+          [options]="matchingBusStops"
+          formControlName="initialStop"
+          placeholder="Przystanek początkowy"
+          optionLabel="town"
+          class="w-full"
+        >
           <ng-template let-option pTemplate="item">
             <div>
               <div>{{ option.town }}</div>
@@ -16,8 +31,13 @@
           </ng-template>
         </p-dropdown>
 
-        <p-dropdown [options]="matchingBusStops" formControlName="lastStop" placeholder="Przystanek końcowy"
-          optionLabel="town" class="w-full">
+        <p-dropdown
+          [options]="matchingBusStops"
+          formControlName="lastStop"
+          placeholder="Przystanek końcowy"
+          optionLabel="town"
+          class="w-full"
+        >
           <ng-template let-option pTemplate="item">
             <div>
               <div>{{ option.town }}</div>
@@ -26,27 +46,54 @@
           </ng-template>
         </p-dropdown>
 
-        <div class="flex gap-4 justify-between">
+        <div class="flex flex-col gap-4 w-full items-end">
+          <div>
+            <p-inputNumber
+              formControlName="price"
+              mode="currency"
+              currency="PLN"
+              locale="pl-PL"
+              placeholder="Cena"
+              class="w-36 place-self-center"
+            />
+          </div>
+
           <div class="flex flex-col gap-2">
             <div class="flex items-center gap-2">
-              <p-checkbox formControlName="isActive" [binary]="true" variant="filled" />
+              <p-checkbox
+                formControlName="isActive"
+                [binary]="true"
+                variant="filled"
+              />
               <span>Trasa aktywna</span>
             </div>
 
             <div class="flex items-center gap-2">
-              <p-checkbox formControlName="isTicketAvailable" [binary]="true" variant="filled" />
+              <p-checkbox
+                formControlName="isTicketAvailable"
+                [binary]="true"
+                variant="filled"
+              />
               <span>Bilet online</span>
             </div>
           </div>
-
-          <p-inputNumber formControlName="price" mode="currency" currency="PLN" locale="pl-PL" placeholder="Cena"
-            class="w-36 place-self-center" />
         </div>
       </div>
 
       <div class="flex justify-end gap-2 mt-12">
-        <p-button label="Anuluj" icon="pi pi-times" severity="secondary" [outlined]="true" (onClick)="onCancel()" />
-        <p-button label="Dodaj" icon="pi pi-check" [disabled]="newRouteForm.invalid" (onClick)="onSubmit()" />
+        <p-button
+          label="Anuluj"
+          icon="pi pi-times"
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="onCancel()"
+        />
+        <p-button
+          label="Dodaj"
+          icon="pi pi-check"
+          [disabled]="newRouteForm.invalid"
+          (onClick)="onSubmit()"
+        />
       </div>
     </form>
   </div>

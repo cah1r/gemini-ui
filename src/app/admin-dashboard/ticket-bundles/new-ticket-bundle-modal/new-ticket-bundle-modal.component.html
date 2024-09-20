@@ -1,0 +1,124 @@
+<p-dialog
+  header="Dodaj pakiet biletów"
+  [modal]="true"
+  [(visible)]="display"
+  [closable]="true"
+  [style]="{ width: '25rem' }"
+  #modalContainer
+>
+  <div class="flex flex-col gap-7 p-fluid h-full">
+    <form
+      [formGroup]="newTicketBundleForm"
+      (ngSubmit)="onSubmit()"
+      class="h-full"
+    >
+      <div class="flex flex-col gap-8">
+        <p-floatLabel class="mt-6">
+          <p-dropdown
+            [options]="availableLines"
+            formControlName="line"
+            optionLabel="description"
+          />
+          <label for="line">Trasa</label>
+        </p-floatLabel>
+
+        <p-floatLabel>
+          <p-dropdown
+            [options]="availableStops"
+            formControlName="stopA"
+            optionLabel="displayName"
+          />
+          <label for="stopA">Przystanek początkowy</label>
+        </p-floatLabel>
+
+        <p-floatLabel>
+          <p-dropdown
+            [options]="matchingStops"
+            formControlName="stopB"
+            optionLabel="displayName"
+          />
+          <label for="stopB">Przystanek końcowy</label>
+        </p-floatLabel>
+
+        <p-button label="Dodaj do pakietu" (onClick)="onAddRoute()" />
+        <p-dataView [value]="selectedRoutes" emptyMessage="Brak dodanych tras">
+          <ng-template pTemplate="list" let-route>
+            <div class="grid">
+              <div
+                class="col-12"
+                *ngFor="let route of selectedRoutes; let first = first"
+              >
+                <div
+                  class="flex flex-row justify-between px-3 gap-3"
+                  [ngClass]="{ 'border-top-1 custom-border pt-3': !first }"
+                >
+                  <div>
+                    <div class="text-sm text-900">{{ route.stopATown }}</div>
+                    <span class="font-light text-secondary text-xs">
+                      {{ route.stopADetails }}
+                    </span>
+                  </div>
+                  <div>
+                    <div class="text-sm text-900">{{ route.stopBTown }}</div>
+                    <span class="font-light text-secondary text-xs text-right">
+                      {{ route.stopBDetails }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </p-dataView>
+
+        <div class="flex w-full justify-between items-center">
+          <div class="flex items-center gap-2 self-end">
+            <label for="price" class="border-">Cena</label>
+            <p-inputNumber
+              formControlName="price"
+              mode="currency"
+              currency="PLN"
+              locale="pl-PL"
+              inputId="price"
+              class="w-28 place-self-center"
+            />
+          </div>
+
+          <div class="flex gap-2 items-center">
+            <label for="quantity">Ilość</label>
+            <p-inputNumber
+              formControlName="ticketsQuantity"
+              inputId="quantity"
+              class="w-20"
+              [min]="1"
+              [max]="1000"
+            />
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <div class="flex items-center gap-2 self-end">
+            <span>Aktywny</span>
+            <p-inputSwitch formControlName="isActive" />
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 mt-4">
+          <p-button
+            label="Anuluj"
+            icon="pi pi-times"
+            severity="secondary"
+            [outlined]="true"
+            (onClick)="onCancel()"
+          />
+          <p-button
+            label="Potwierdź"
+            icon="pi pi-check"
+            [disabled]="newTicketBundleForm.invalid"
+            (onClick)="onSubmit()"
+          />
+        </div>
+      </div>
+    </form>
+  </div>
+</p-dialog>
+<p-toast position="bottom-right" key="br"></p-toast>

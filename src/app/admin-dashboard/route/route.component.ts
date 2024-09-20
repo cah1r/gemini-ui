@@ -70,7 +70,7 @@ export class RouteComponent implements OnInit {
     private http: HttpClient,
     private confirmationService: ConfirmationService,
     private notification: NotificationService,
-  ) { }
+  ) {}
 
   oneOfTwo(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -82,7 +82,6 @@ export class RouteComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('RouteComponent initialized');
     this.loadRoutes({ page: 0 });
   }
 

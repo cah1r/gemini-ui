@@ -7,6 +7,7 @@ import { MainPageComponent } from './pages/main-page/main-page.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { AdminGuard } from './services/admin.guard';
 import { CarsComponent } from './admin-dashboard/cars/cars.component';
+import { TicketBundlesComponent } from './admin-dashboard/ticket-bundles/ticket-bundles.component';
 
 export const routes: Routes = [
   {
@@ -24,6 +25,7 @@ export const routes: Routes = [
       { path: 'lines', component: LineComponent, data: { animation: 'LinePage' } },
       { path: 'drivers', component: DriversComponent, data: { animation: 'DriversPage' } },
       { path: 'cars', component: CarsComponent, data: { animation: 'CarsPage' } },
+      { path: 'bundles', component: TicketBundlesComponent, data: { animation: 'BundlesPage' } },
     ],
     data: { animation: 'AdminDash' },
   },
