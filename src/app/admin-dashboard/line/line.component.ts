@@ -47,7 +47,7 @@ import { NewStopModalComponent } from './new-stop-modal/new-stop-modal.component
 export class LineComponent implements OnInit {
   newLineForm: FormGroup;
   private _allLines: LineViewDto[] = [];
-  stopsCache: { [lineId: number]: StopWithLineDto[] } = {}
+  stopsCache: { [lineId: number]: StopWithLineDto[] } = {};
   expandedStops = {};
   tableSize: any = 'p-datatable-sm';
 
@@ -76,7 +76,7 @@ export class LineComponent implements OnInit {
   }
 
   onRowReorder(event: any, stops: StopWithLineDto[]) {
-    this.stopService.updateStopsOrder(event, stops)
+    this.stopService.updateStopsOrder(event, stops);
   }
 
   onSubmit() {
@@ -84,8 +84,10 @@ export class LineComponent implements OnInit {
       description: this.newLineForm.get('lineDescription')?.value,
     };
     this.lineService.createLine(line).subscribe({
-      next: () => this.notification.success(`Utowrzono nowa trasę ${line.description}`),
-      error: () => this.notification.error('Wystapił bład podczas tworzenia nowej linii'),
+      next: () =>
+        this.notification.success(`Utowrzono nowa trasę ${line.description}`),
+      error: () =>
+        this.notification.error('Wystapił bład podczas tworzenia nowej linii'),
     });
     this.newLineForm.reset();
   }
@@ -129,10 +131,11 @@ export class LineComponent implements OnInit {
   deleteStop(stopId: number) {
     this.stopService.deleteStop(stopId).subscribe({
       next: () => {
-        this.fetchAllLines()
-        this.notification.success("Poprawnie usunięto wskazany przystanek")
+        this.fetchAllLines();
+        this.notification.success('Poprawnie usunięto wskazany przystanek');
       },
-      error: () => this.notification.error("Wystąpił błąd podczas usuwania przystanku")
+      error: () =>
+        this.notification.error('Wystąpił błąd podczas usuwania przystanku'),
     });
   }
 }

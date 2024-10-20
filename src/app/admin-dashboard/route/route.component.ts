@@ -21,8 +21,11 @@ import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { NotificationService } from '../../services/notification-factory.service';
 import { API_URL } from '../../shared/constants';
+import { LineViewDto } from '../../shared/model/line';
 import { Page } from '../../shared/model/page';
 import { RouteDto } from '../../shared/model/route';
+import { LineService } from '../services/line.service';
+import { TariffsService } from '../services/tariffs.service';
 import { NewRouteModalComponent } from './new-route-modal/new-route-modal.component';
 
 @Component({
@@ -55,8 +58,10 @@ import { NewRouteModalComponent } from './new-route-modal/new-route-modal.compon
   styleUrl: './route.component.css',
 })
 export class RouteComponent implements OnInit {
-  @ViewChild('newRouteModal') newRouteModal!: NewRouteModalComponent
+  @ViewChild('newRouteModal') newRouteModal!: NewRouteModalComponent;
   private _allRoutes: RouteDto[] = [];
+  lines: LineViewDto[] = [];
+  selectedLine: LineViewDto | undefined;
 
   keyword: string = '';
   tableSize = 'p-datatable-sm';
@@ -68,8 +73,10 @@ export class RouteComponent implements OnInit {
 
   constructor(
     private http: HttpClient,
+    private lineService: LineService,
+    private tariffsService: TariffsService,
     private confirmationService: ConfirmationService,
-    private notification: NotificationService,
+    private notification: NotificationService
   ) {}
 
   oneOfTwo(): ValidatorFn {
@@ -82,12 +89,20 @@ export class RouteComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadRoutes({ page: 0 });
+    this.fetchInitialData();
+  }
+
+  private fetchInitialData() {
+    this.lineService.fetchAllLines().subscribe((data) => {
+      this.lines = data;
+      this.selectedLine = this.lines[0];
+      this.loadRoutes({ page: 0 });
+    });
   }
 
   openNewRouteModal() {
     if (this.newRouteModal) {
-      this.newRouteModal.show()
+      this.newRouteModal.show();
     }
   }
 
@@ -98,7 +113,7 @@ export class RouteComponent implements OnInit {
   onRouteCreated() {
     this.loadRoutes({ page: this.currentPage });
     if (this.newRouteModal) {
-      this.newRouteModal.hide()
+      this.newRouteModal.hide();
     }
   }
 
@@ -110,21 +125,27 @@ export class RouteComponent implements OnInit {
     const params = new HttpParams()
       .set('keyword', this.keyword)
       .set('page', event.page!)
-      .set('size', this.rows);
+      .set('size', this.rows)
+      .set('lineId', this.selectedLine!.id);
 
     this.http.get<Page<RouteDto>>(API_URL + `/routes`, { params }).subscribe({
       next: (data) => {
         this._allRoutes = data.content;
         this.totalRecords = data.page.totalElements;
         this.currentPage = event.page!;
-        console.log(JSON.stringify(event))
+        console.log(JSON.stringify(event));
       },
       error: (e) => {
         if (e.status !== 401) {
-          this.notification.error('Wystąpił błąd podczas pobierania tras')
+          this.notification.error('Wystąpił błąd podczas pobierania tras');
         }
       },
-    })
+    });
+  }
+
+  onLineChange() {
+    const paginator: PaginatorState = { page: 0, rows: this.rows };
+    this.loadRoutes(paginator);
   }
 
   onDeleteRoute(id: string) {
@@ -160,7 +181,7 @@ export class RouteComponent implements OnInit {
       )
       .subscribe({
         error: () => {
-          this.notification.error('Wystąpił błąd podczas zmiany statusu')
+          this.notification.error('Wystąpił błąd podczas zmiany statusu');
           route.isTicketAvailable = !event.checked;
         },
       });
@@ -186,7 +207,8 @@ export class RouteComponent implements OnInit {
       )
       .subscribe({
         next: () => this.loadRoutes({ page: this.currentPage }),
-        error: () => this.notification.error('Wystąpił błąd podczas zmiany statusu')
+        error: () =>
+          this.notification.error('Wystąpił błąd podczas zmiany statusu'),
       });
   }
 
@@ -204,5 +226,13 @@ export class RouteComponent implements OnInit {
   formatCityInfo(city: string, details: string) {
     const formatedDetails = details === null ? '' : ', ' + details;
     return city + formatedDetails;
+  }
+
+  downloadTariffExcel() {
+    this.tariffsService.downloadTariffExcel(this.selectedLine!);
+  }
+
+  loadTariffsFromFile() {
+    console.error('Method not implemented');
   }
 }
