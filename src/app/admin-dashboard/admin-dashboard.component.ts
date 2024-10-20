@@ -18,24 +18,24 @@ import { routeAnimations } from '../shared/app.animations';
 export class AdminDashboardComponent implements OnInit {
   items: MenuItem[] | undefined;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.items = [
-      {
-        label: 'Trasy',
-        icon: 'pi pi-share-alt',
-        command: () => this.router.navigate(['/admin/routes']),
-      },
       {
         label: 'Linie',
         icon: 'pi pi-arrows-h',
         command: () => this.router.navigate(['/admin/lines']),
       },
       {
+        label: 'Cennik',
+        icon: 'pi pi-dollar',
+        command: () => this.router.navigate(['/admin/routes']),
+      },
+      {
         label: 'Pakiety',
-        icon: 'pi pi-receipt',
-        command: () => this.router.navigate(['/admin/bundles'])
+        icon: 'pi pi-box',
+        command: () => this.router.navigate(['/admin/bundles']),
       },
       { label: 'Rozkład jazdy', icon: 'pi pi-calendar' },
       {
@@ -46,7 +46,7 @@ export class AdminDashboardComponent implements OnInit {
       {
         label: 'Pojazdy',
         icon: 'pi pi-car',
-        command: () => this.router.navigate(['/admin/cars'])
+        command: () => this.router.navigate(['/admin/cars']),
       },
     ];
   }

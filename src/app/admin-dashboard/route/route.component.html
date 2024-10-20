@@ -1,22 +1,61 @@
 <div class="shadow-xl w-full">
-  <p-table #dt [value]="allRoutes" [tableStyle]="{ 'min-width': '50rem' }" [globalFilterFields]="[
+  <p-table
+    #dt
+    [value]="allRoutes"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [globalFilterFields]="[
       'originStop.town',
       'originStop.details',
       'destinationStop.town',
       'destinationStop.details'
-    ]" styleClass="p-datatable-sm">
+    ]"
+    styleClass="p-datatable-sm"
+  >
     <ng-template pTemplate="caption">
       <div class="flex justify-between items-center p-3">
-        <p class="text-lg">Dostępne trasy</p>
-        <div class="flex">
+        <div class="flex gap-4 items-center">
+          <p class="text-lg">Wybierz linię</p>
+          <p-dropdown
+            [options]="lines"
+            [(ngModel)]="selectedLine"
+            (ngModelChange)="onLineChange()"
+            optionLabel="description"
+            placeholder="Wybierz linię"
+          />
+        </div>
+        <!-- <div class="flex">
           <p-iconField iconPosition="left" class="ml-auto">
             <p-inputIcon>
               <i class="pi pi-search"></i>
             </p-inputIcon>
-            <input pInputText type="text" (input)="onGlobalFilter($event)" placeholder="Szukaj słowa kluczowe" />
+            <input
+              pInputText
+              type="text"
+              (input)="onGlobalFilter($event)"
+              placeholder="Szukaj słowa kluczowe"
+            />
           </p-iconField>
+        </div> -->
+        <div class="flex gap-3">
+          <p-button
+            label="Szablon excel"
+            size="small"
+            [outlined]="true"
+            (onClick)="downloadTariffExcel()"
+          />
+          <p-button
+            label="Załaduj cennik z pliku"
+            size="small"
+            [outlined]="true"
+            (onClick)="loadTariffsFromFile()"
+          />
+          <p-button
+            label="Dodaj"
+            size="small"
+            [outlined]="true"
+            (onClick)="newRouteModal.show()"
+          />
         </div>
-        <p-button label="Dodaj" size="small" [outlined]="true" (onClick)="newRouteModal.show()" />
       </div>
     </ng-template>
     <ng-template pTemplate="header">
@@ -35,26 +74,57 @@
           {{ formatCityInfo(route.originStop.town, route.originStop.details) }}
         </td>
         <td class="p-0 h-auto">
-          {{ formatCityInfo(route.destinationStop.town, route.destinationStop.details) }}
+          {{
+            formatCityInfo(
+              route.destinationStop.town,
+              route.destinationStop.details
+            )
+          }}
         </td>
         <td class="p-0 h-auto">{{ route.price | number : "1.2-2" }} zł</td>
         <td class="p-0">
-          <p-inputSwitch [(ngModel)]="route.isTicketAvailable" (onChange)="setTicketAvailability($event, route)" />
+          <p-inputSwitch
+            [(ngModel)]="route.isTicketAvailable"
+            (onChange)="setTicketAvailability($event, route)"
+          />
         </td>
         <td class="min-w-40 p-0">
           <div class="flex flex-row items-center">
-            <p-button size="large" *ngIf="route.isActive" severity="contrast" icon="pi pi-minus-circle" [rounded]="true"
-              [text]="true" (click)="setActiveStatus(route.id, false)"
-              (keyup.enter)="setActiveStatus(route.id, false)" />
-            <p-button *ngIf="!route.isActive" severity="success" icon="pi pi-check-circle" [rounded]="true"
-              [text]="true" (click)="setActiveStatus(route.id, true)" (keyup.enter)="setActiveStatus(route.id, true)" />
-            <p-tag [value]="mapBooleanToStatus(route.isActive)" [severity]="getSeverity(route.isActive)"
-              [rounded]="true" />
+            <p-button
+              size="large"
+              *ngIf="route.isActive"
+              severity="contrast"
+              icon="pi pi-minus-circle"
+              [rounded]="true"
+              [text]="true"
+              (click)="setActiveStatus(route.id, false)"
+              (keyup.enter)="setActiveStatus(route.id, false)"
+            />
+            <p-button
+              *ngIf="!route.isActive"
+              severity="success"
+              icon="pi pi-check-circle"
+              [rounded]="true"
+              [text]="true"
+              (click)="setActiveStatus(route.id, true)"
+              (keyup.enter)="setActiveStatus(route.id, true)"
+            />
+            <p-tag
+              [value]="mapBooleanToStatus(route.isActive)"
+              [severity]="getSeverity(route.isActive)"
+              [rounded]="true"
+            />
           </div>
         </td>
         <td class="flex justify-end p-0.5">
-          <p-button severity="danger" icon="pi pi-trash" [rounded]="true" [text]="true"
-            (click)="onDeleteRoute(route.id)" (keyup.enter)="onDeleteRoute(route.id)" />
+          <p-button
+            severity="danger"
+            icon="pi pi-trash"
+            [rounded]="true"
+            [text]="true"
+            (click)="onDeleteRoute(route.id)"
+            (keyup.enter)="onDeleteRoute(route.id)"
+          />
         </td>
       </tr>
     </ng-template>
@@ -65,10 +135,18 @@
       </tr>
     </ng-template>
   </p-table>
-  <p-paginator styleClass="paginator-override" (onPageChange)="loadRoutes($event)" [first]="first" [rows]="rows"
-    [totalRecords]="totalRecords" />
+  <p-paginator
+    styleClass="paginator-override"
+    (onPageChange)="loadRoutes($event)"
+    [first]="first"
+    [rows]="rows"
+    [totalRecords]="totalRecords"
+  />
 </div>
 
 <p-confirmDialog></p-confirmDialog>
 
-<app-new-route-modal #newRouteModal (routeCreated)="onRouteCreated()"></app-new-route-modal>
+<app-new-route-modal
+  #newRouteModal
+  (routeCreated)="onRouteCreated()"
+></app-new-route-modal>

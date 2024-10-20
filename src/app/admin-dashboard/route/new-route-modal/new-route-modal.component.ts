@@ -69,15 +69,20 @@ export class NewRouteModalComponent {
           this.newRouteForm.get('initialStop')?.enable();
           this.newRouteForm.get('lastStop')?.enable();
           this.stopService.fetchLineStops(selectedLine.id!).subscribe({
-            next: (fetchedStops) => this._matchingBusStops = fetchedStops.sort((a, b) => a.lineOrder - b.lineOrder),
+            next: (fetchedStops) =>
+              (this._matchingBusStops = fetchedStops.sort(
+                (a, b) => a.lineOrder - b.lineOrder
+              )),
             error: () =>
-              this.notification.error('Wystąpił błąd podczas pobierania przystanków'),
-          })
+              this.notification.error(
+                'Wystąpił błąd podczas pobierania przystanków'
+              ),
+          });
         } else {
           this.newRouteForm.get('initialValue')?.disable();
           this.newRouteForm.get('lastStop')?.disable();
         }
-      }); 
+      });
   }
 
   fetchAllLines() {
@@ -107,6 +112,7 @@ export class NewRouteModalComponent {
       price: this.newRouteForm.get('price')?.value,
       isActive: this.newRouteForm.get('isActive')?.value,
       isTicketAvailable: this.newRouteForm.get('isTicketAvailable')?.value,
+      lineId: this.newRouteForm.get('selectedLine')?.value.id,
     };
     this.routeService.createRoute(createRouteDto).subscribe({
       next: () => {
